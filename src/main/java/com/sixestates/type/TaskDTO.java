@@ -1,0 +1,15 @@
+package com.sixestates.type;
+import lombok.Data;
+import java.io.Serializable;
+
+@Data
+public class TaskDTO implements Serializable {
+
+    private String data;
+
+    private int errorCode;
+
+    private String message;
+
+    private int status;
+}
