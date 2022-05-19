@@ -65,7 +65,7 @@ public class Example {
         System.out.println("taskId: " + taskDto.getData());
 
         // Extract the  result
-        if(taskDto.getStatus() == 200) {
+        if( taskDto.getStatus() == 200) {
             try {
                 String respJson = ResultExtractor.extractResultByTaskid(taskDto.getData());
                 System.out.println(respJson);
@@ -74,10 +74,31 @@ public class Example {
             }
 
             // Wait until the task done
-            Thread.sleep( 1000 * 60 * 2 );
+            Thread.sleep( 1000 * 60 * 1 );
             String respJson = ResultExtractor.extractResultByTaskid(taskDto.getData());
             //Print the response json string
             System.out.println(respJson);
         }
+
+        // Submit task using  InputStream
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(FILE_PATH);
+
+            taskInfo = TaskInfo.builder()
+                    .fileName("acount_statement_mandiri.pdf")
+                    .inputStream(fis)
+                    .fileType("CBKS")
+                    .build();
+
+            taskDto = ExtractSubmitter.submit(taskInfo);
+            System.out.println("taskId: " + taskDto.getData());
+            fis.close();
+        }catch(Exception e) {
+            System.out.println(e);
+        }finally {
+            if(fis!=null) fis.close();
+        }
+
     }
 }

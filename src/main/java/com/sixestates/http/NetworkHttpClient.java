@@ -166,7 +166,7 @@ public class NetworkHttpClient extends HttpClient {
             builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
         }else if(request.getInputStream() != null) {
             logger.info("Iputstream ");
-            builder.addBinaryBody("file", request.getInputStream(), ContentType.DEFAULT_BINARY, fileName);
+            builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
         }
         builder.addTextBody("fileType", fileType);
         if(Idp.getCustomer() != null) {

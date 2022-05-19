@@ -16,7 +16,7 @@ public class Request {
     private final String url;
     private final Map<String, List<String>> postParams;
     private final Map<String, List<String>> headerParams;
-    private InputStream inputStream;
+    private  InputStream inputStream;
     private boolean isSubmit = false;
     private  String token;
 
