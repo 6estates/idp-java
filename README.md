@@ -60,8 +60,8 @@ Idp.init(Token);
 ### Submit a Task
 
 ``` java
-String FILE_NAME = "acount_statement_mandiri.pdf";
-String FILE_PATH = "/home//lay/Documents/acount_statement_mandiri.pdf" ;
+String FILE_NAME = "xxx.pdf";
+String FILE_PATH = "/home/Documents/xxx.pdf" ;
 String FILE_TYPE = "CBKS";
 
 try {
@@ -86,7 +86,7 @@ try {
     fis = new FileInputStream(FILE_PATH);
 
     taskInfo = TaskInfo.builder()
-            .fileName("acount_statement_mandiri.pdf")
+            .fileName("xxx.pdf")
             .inputStream(fis)
             .fileType("CBKS")
             .build();
