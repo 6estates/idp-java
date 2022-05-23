@@ -43,7 +43,7 @@ public class ExtractSubmitter {
 
         Request request = new Request(
                 HttpMethod.POST,
-                "https://idp.6estates.com/customer/extraction/fields/async",
+                Idp.getSubmitUrl(),
                 taskInfo.getInputStream()
         );
         request.setIsSubmit(true);

@@ -74,7 +74,7 @@ public class Example {
             }
 
             // Wait until the task done
-            Thread.sleep( 1000 * 60 * 1 );
+            Thread.sleep( 1000 * 60 * 3 );
             String respJson = ResultExtractor.extractResultByTaskid(taskDto.getData());
             //Print the response json string
             System.out.println(respJson);

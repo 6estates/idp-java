@@ -17,6 +17,8 @@ public class Idp {
     private static String customer = System.getenv("IDP_CUSTOMER");
     private static String customerParam = System.getenv("IDP_CUSTOMERPARAM");
     private static String token; // customer used if this is null
+    private static String submitUrl = "https://idp-sea.6estates.com/customer/extraction/fields/async";
+    private static String extractUrl = "https://idp-sea.6estates.com/customer/extraction/field/async/result/";
     private static String lang = System.getenv("IDP_LANG");
     private static volatile IdpRestClient restClient;
 
@@ -66,11 +68,6 @@ public class Idp {
 
         Idp.customer = customer;
     }
-    public static synchronized String getToken() {return token;}
-
-    public static synchronized String getCustomer() {return customer;}
-
-    public static synchronized String getCustomerParam() {return customerParam;}
 
     /**
      * Set the account sid.
@@ -108,7 +105,6 @@ public class Idp {
         Idp.customerParam = customerParam;
     }
 
-
     /**
      * Set the lang.
      *
@@ -117,6 +113,24 @@ public class Idp {
     public static synchronized void setLang(final String lang) {
         Idp.lang = lang;
     }
+
+    public static synchronized void setSubmitUrl(final String submitUrl) {
+        Idp.submitUrl = submitUrl;
+    }
+
+    public static synchronized void setExtractUrl(final String extractUrl) {
+        Idp.extractUrl = extractUrl;
+    }
+
+    public static synchronized String getToken() {return token;}
+
+    public static synchronized String getSubmitUrl() {return submitUrl;}
+
+    public static synchronized String getExtractUrl() {return extractUrl;}
+
+    public static synchronized String getCustomer() {return customer;}
+
+    public static synchronized String getCustomerParam() {return customerParam;}
 
 
     /**

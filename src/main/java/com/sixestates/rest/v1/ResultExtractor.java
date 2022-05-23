@@ -38,7 +38,7 @@ public class ResultExtractor {
     private static String run(final IdpRestClient client, String taskId) {
         Request request = new Request(
                 HttpMethod.GET,
-                "https://idp.6estates.com/customer/extraction/field/async/result/" + taskId
+                Idp.getExtractUrl() + taskId
         );
         request.addHeaderParam(HttpHeaders.ACCEPT, "*/*");
         Response response = client.request(request);

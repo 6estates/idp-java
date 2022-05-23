@@ -161,11 +161,11 @@ public class NetworkHttpClient extends HttpClient {
         String filePath = request.getPostParams().get("filePath").get(0);
         String fileType = request.getPostParams().get("fileType").get(0);
         if(filePath != null) {
-            logger.info("filePath: " + filePath);
+            logger.debug("filePath: " + filePath);
             File file = new File(filePath);
             builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
         }else if(request.getInputStream() != null) {
-            logger.info("Iputstream ");
+            logger.debug("Iputstream ");
             builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
         }
         builder.addTextBody("fileType", fileType);

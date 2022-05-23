@@ -17,17 +17,17 @@ This library supports the following Java implementations:
 
 ## Installation
 
-Idp-java uses Maven. 
-
+Idp-java uses Maven.
+Download the [latest version](https://github.com/6estates/idp-java/blob/main/target/sixestates-sdk-1.0.jar).
 Use the following dependency in your project to grab via Maven:
 
 ```
-         <dependency>
-            <groupId>com.sixestates.sdk</groupId>
-            <artifactId>sixestates-sdk</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
+   <dependency>
+      <groupId>com.sixestates.sdk</groupId>
+      <artifactId>sixestates-sdk</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+  </dependency>
 ```
 
 
@@ -49,7 +49,7 @@ If you run into trouble with local tests, use:
 
 ### Initialize the Client
 
-```java
+``` java
 // Find your Token at https://idp-sea.6estates.com/
 
 String Token = "XXXXXX";
@@ -59,7 +59,7 @@ Idp.init(Token);
 
 ### Submit a Task
 
-```java
+``` java
 String FILE_NAME = "acount_statement_mandiri.pdf";
 String FILE_PATH = "/home//lay/Documents/acount_statement_mandiri.pdf" ;
 String FILE_TYPE = "CBKS";
@@ -80,7 +80,7 @@ try {
 
 ### Extract the result
 
-```java
+``` java
 if(taskDto.getStatus() == 200){
     try{
         String respJson=ResultExtractor.extractResultByTaskid(taskDto.getData());
