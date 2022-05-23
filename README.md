@@ -78,6 +78,29 @@ try {
 }
 ```
 
+### Submit a Task using InputStream
+
+``` java
+FileInputStream fis = null;
+try {
+    fis = new FileInputStream(FILE_PATH);
+
+    taskInfo = TaskInfo.builder()
+            .fileName("acount_statement_mandiri.pdf")
+            .inputStream(fis)
+            .fileType("CBKS")
+            .build();
+
+    taskDto = ExtractSubmitter.submit(taskInfo);
+    System.out.println("taskId: " + taskDto.getData());
+    fis.close();
+}catch(Exception e) {
+    System.out.println(e);
+}finally {
+    if(fis!=null) fis.close();
+}
+```
+
 ### Extract the result
 
 ``` java
