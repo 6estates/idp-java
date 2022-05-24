@@ -1,5 +1,6 @@
-# 6Estates idp-java
-
+6Estates idp-java
+===================
+A Java SDK for communicating with the 6Estates Intelligent Document Processing(IDP) Platform.
 
 ## Documentation
 
