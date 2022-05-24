@@ -60,17 +60,18 @@ Idp.init(Token);
 ### Submit a Task
 
 ``` java
-String FILE_NAME = "xxx.pdf";
-String FILE_PATH = "/home/Documents/xxx.pdf" ;
-String FILE_TYPE = "CBKS";
+String fileName = "xxx.pdf";
+String filePath = "/home/Documents/xxx.pdf" ;
+String fileType = "CBKS";
 
 try {
     TaskInfo taskInfo = TaskInfo.builder()
-        .fileName(FILE_NAME)
-        .filePath(FILE_PATH)
-        .fileType(FILE_TYPE)
+        .fileName(fileName)
+        .filePath(filePath)
+        .fileType(fileType)
         .build();
-    taskDto = ExtractSubmitter.submit(taskInfo);
+        
+    TaskDto taskDto = ExtractSubmitter.submit(taskInfo);
     
     System.out.println("taskId: " + taskDto.getData());
     }catch (final ApiException | ApiConnectionException e) {
@@ -85,13 +86,14 @@ FileInputStream fis = null;
 try {
     fis = new FileInputStream(FILE_PATH);
 
-    taskInfo = TaskInfo.builder()
+    TaskInfo taskInfo = TaskInfo.builder()
             .fileName("xxx.pdf")
             .inputStream(fis)
             .fileType("CBKS")
             .build();
 
-    taskDto = ExtractSubmitter.submit(taskInfo);
+    TaskDto taskDto = ExtractSubmitter.submit(taskInfo);
+    
     System.out.println("taskId: " + taskDto.getData());
     fis.close();
 }catch(Exception e) {
