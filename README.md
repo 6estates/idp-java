@@ -32,7 +32,7 @@ Use the following dependency in your project to grab via Maven:
 
 ### Obtaining the latest Jar. 
 
-Please download the jars from [latest version](https://github.com/6estates/idp-java/blob/main/target/sixestates-sdk-1.0.jar).
+Please download the jars from [latest version](https://github.com/6estates/idp-java/releases/tag/0.0.1).
 
 ### Building from source code 
 
