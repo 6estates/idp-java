@@ -25,7 +25,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates.sdk</groupId>
       <artifactId>sixestates-sdk</artifactId>
-      <version>1.0</version>
+      <version>0.0.1</version>
       <scope>compile</scope>
   </dependency>
 ```
