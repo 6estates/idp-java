@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 
 public class Example {
 
-    public static final String TOKEN = "QWhPM7Wxqr3xc4dCQFmXhH8xYD8CTq3N41XnvV38OblXHK/tFDTNuUWZaoMdd/u5";
+    public static final String TOKEN = "XXXXXXX";
     public static final String FILE_NAME = "acount_statement_mandiri.pdf";
     public static final String FILE_PATH = "/home//lay/Documents/acount_statement_mandiri.pdf" ;
     public static final String FILE_TYPE = "CBKS";

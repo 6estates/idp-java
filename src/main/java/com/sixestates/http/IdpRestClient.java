@@ -44,12 +44,12 @@ public class IdpRestClient {
         logRequest(request);
         Response response = httpClient.reliableRequest(request);
 
-        if (logger.isInfoEnabled()) {
-            logger.info("status code: {}", response.getStatusCode());
+        if (logger.isDebugEnabled()) {
+            logger.debug("status code: {}", response.getStatusCode());
             org.apache.http.Header[] responseHeaders = response.getHeaders();
-            logger.info("response headers:");
+            logger.debug("response headers:");
             for (int i = 0; i < responseHeaders.length; i++) {
-                logger.info("responseHeader: {}", responseHeaders[i]);
+                logger.debug("responseHeader: {}", responseHeaders[i]);
             }
         }
 
@@ -82,23 +82,23 @@ public class IdpRestClient {
      * Logging debug information about HTTP request.
      */
     public void logRequest(final Request request) {
-        if (logger.isInfoEnabled()) {
-            logger.info("-- BEGIN Idp API Request --");
-            logger.info("request method: " + request.getMethod());
-            logger.info("request URL: " + request.constructURL().toString());
+        if (logger.isDebugEnabled()) {
+            logger.debug("-- BEGIN Idp API Request --");
+            logger.debug("request method: " + request.getMethod());
+            logger.debug("request URL: " + request.constructURL().toString());
             final Map<String, List<String>> headerParams = request.getHeaderParams();
 
 
             if (headerParams != null && !headerParams.isEmpty()) {
-                logger.info("header parameters: ");
+                logger.debug("header parameters: ");
                 for (String key : headerParams.keySet()) {
                     if (!key.toLowerCase().contains("authorization")) {
-                        logger.info(key + ": " + headerParams.get(key));
+                        logger.debug(key + ": " + headerParams.get(key));
                     }
                 }
             }
 
-            logger.info("-- END Idp API Request --");
+            logger.debug("-- END Idp API Request --");
         }
     }
 

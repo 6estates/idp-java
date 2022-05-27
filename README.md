@@ -79,7 +79,7 @@ try {
         .fileType(fileType)
         .build();
         
-    TaskDto taskDto = ExtractSubmitter.submit(taskInfo);
+    TaskDTO taskDto = ExtractSubmitter.submit(taskInfo);
     
     System.out.println("taskId: " + taskDto.getData());
     }catch (final ApiException | ApiConnectionException e) {
@@ -100,7 +100,7 @@ try {
             .fileType("CBKS")
             .build();
 
-    TaskDto taskDto = ExtractSubmitter.submit(taskInfo);
+    TaskDTO taskDto = ExtractSubmitter.submit(taskInfo);
     
     System.out.println("taskId: " + taskDto.getData());
     fis.close();
