@@ -19,7 +19,6 @@ public class ExtractSubmitter {
 
     /**
      * Construct a new ExtractSubmitter.
-     *
      */
     private ExtractSubmitter() {}
 
@@ -60,7 +59,6 @@ public class ExtractSubmitter {
             }
             throw new ApiException(restException);
         }
-        //response.getContent();
         return JSON.parseObject(response.getContent(), TaskDTO.class);
     }
 
@@ -85,8 +83,18 @@ public class ExtractSubmitter {
         if(taskInfo.getCustomer() != null) {
             request.addPostParam("customer", taskInfo.getCustomer());
         }
+
         if(taskInfo.getCustomerParam() != null) {
             request.addPostParam("customerParam", taskInfo.getCustomerParam());
+        }
+
+        if(taskInfo.getCallback() != null) {
+            request.addPostParam("callback", taskInfo.getCallback());
+            request.addPostParam("callbackMode", String.valueOf(taskInfo.getCallbackMode()));
+        }
+
+        if(taskInfo.isHitl()) {
+            request.addPostParam("hitl", "true");
         }
     }
 

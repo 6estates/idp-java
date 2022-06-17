@@ -8,8 +8,6 @@ import com.sixestates.rest.v1.ExtractSubmitter;
 import com.sixestates.rest.v1.ResultExtractor;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
-
-import java.io.File;
 import java.io.FileInputStream;
 
 public class Example {
@@ -36,6 +34,7 @@ public class Example {
                     .fileName(FILE_NAME)
                     .filePath(FILE_PATH)
                     .fileType(FILE_TYPE)
+                    .hitl(true)
                     .build();
             taskDto = ExtractSubmitter.submit(taskInfo);
 
@@ -58,13 +57,13 @@ public class Example {
         // Submit the  new task
         TaskInfo taskInfo = TaskInfo.builder()
                 .fileName("1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
-                .filePath("/home//lay/Documents/1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
+                .filePath("/home/Documents/1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
                 .fileType("CBKS")
                 .build();
         taskDto = ExtractSubmitter.submit(taskInfo);
         System.out.println("taskId: " + taskDto.getData());
 
-        // Extract the  result
+        // Extract the result
         if( taskDto.getStatus() == 200) {
             try {
                 String respJson = ResultExtractor.extractResultByTaskid(taskDto.getData());
@@ -80,7 +79,7 @@ public class Example {
             System.out.println(respJson);
         }
 
-        // Submit task using  InputStream
+        // Submit task using InputStream
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(FILE_PATH);
@@ -99,6 +98,5 @@ public class Example {
         }finally {
             if(fis!=null) fis.close();
         }
-
     }
 }

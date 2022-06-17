@@ -24,6 +24,13 @@ public class IdpRestClient {
     private final HttpClient httpClient;
     private static final Logger logger = LoggerFactory.getLogger(IdpRestClient.class);
 
+    /**
+     * New a IdpRestClient.
+     *
+     * @param customer Idp customer
+     * @param customerParam
+     * @param token Idp client token
+     */
     public IdpRestClient(final String customer, final String customerParam, final String token) {
         this.customer = customer;
         this.customerParam = customerParam;

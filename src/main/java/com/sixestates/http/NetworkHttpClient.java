@@ -22,7 +22,6 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
@@ -30,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NetworkHttpClient extends HttpClient {
-    private static final Logger logger = LoggerFactory.getLogger(IdpRestClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(NetworkHttpClient.class);
 
     private final org.apache.http.client.HttpClient client;
 
@@ -165,7 +164,6 @@ public class NetworkHttpClient extends HttpClient {
             File file = new File(filePath);
             builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
         }else if(request.getInputStream() != null) {
-            logger.debug("Iputstream ");
             builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
         }
         builder.addTextBody("fileType", fileType);
@@ -177,6 +175,17 @@ public class NetworkHttpClient extends HttpClient {
             builder.addTextBody("customerParam", Idp.getCustomerParam());
         }
 
+        if(request.getPostParams().containsKey("callback")) {
+            String callBackUrl = request.getPostParams().get("callback").get(0);
+            String callBackMode = request.getPostParams().get("callbackMode").get(0);
+            builder.addTextBody("callback", callBackUrl);
+            builder.addTextBody("callbackMode", callBackMode);
+        }
+
+        if(request.getPostParams().containsKey("hitl")) {
+            builder.addTextBody("hitl", "true");
+        }
+
         // Construct Http body
         HttpPost httpPost = new HttpPost(request.getUrl());
         HttpEntity entity = builder.build();
@@ -186,7 +195,6 @@ public class NetworkHttpClient extends HttpClient {
 
         HttpResponse response = null;
         try {
-
             response = client.execute(httpPost);
             HttpEntity respEntity = response.getEntity();
             return new Response(

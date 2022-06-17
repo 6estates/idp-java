@@ -32,7 +32,7 @@ Use the following dependency in your project to grab via Maven:
 
 ### Obtaining the latest Jar. 
 
-Please download the jars from [latest version](https://github.com/6estates/idp-java/releases/tag/0.0.1).
+Please download the jars from [latest version](https://github.com/6estates/idp-java/releases).
 
 ### Building from source code 
 
@@ -124,5 +124,88 @@ if(taskDto.getStatus() == 200){
 }
 ```
 
+### Recieve The Result from Callback
+
+The IDP platform provides callback service. If the callback parameter is not empty, the IDP system will send a request containing the task status to the callback url, please see the [callback documentation][callbackdocs].
+
+#### Submit a Task with Callback parameter
+``` java
+String fileName = "xxx.pdf";
+String filePath = "/Documents/xxx.pdf" ;
+String fileType = "CBKS";
+String CALLBACK_URL = "http://xxx.com";
+Int CALLBACK_MODE = 1;
+
+TaskInfo taskInfo = TaskInfo.builder()
+        .fileName(FILE_NAME)
+        .filePath(FILE_PATH)
+        .fileType(FILE_TYPE)
+        .callback(CALLBACK_URL)
+        .callbackMode(CALLBACK_MODE)
+        .build();
+taskDto = ExtractSubmitter.submit(taskInfo4);
+System.out.println("taskId: " + taskDto.getData());
+```
+
+#### Start a CallBack SocketServer
+``` java
+import com.sixestates.rest.v1.CallBackSocketServer;
+
+// Init a CallBackServer
+CallBackSocketServer callBackServer = new CallBackSocketServer("localhost", 8080);
+// Start the server asynchronously
+callBackServer.asynStartServer();
+
+// Wait a CallBack request 
+ConcurrentHashMap<String, String> jsonMap = callBackServer.getJsonStrMap();
+for (String taskId: jsonMap.keySet()) {
+    System.out.println("taskId: " + taskId  + ": " + jsonMap.get(taskId));
+}
+
+ConcurrentHashMap<String, byte[]> fileBytesMap = callBackServer.getFileBytesMap();
+for (String fileName: fileBytesMap.keySet()) {
+    System.out.println("fileName: " + fileName);
+    byte[] fileBytes =  fileBytesMap.get(fileName);
+}
+
+// Stop the server
+callBackServer.stopServer();
+```
+
+#### CallBack Springboot Controller
+``` java
+@Controller
+public class CallBackController {
+  @RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  @ResponseBody
+  public ResponseEntity mode0or1CallBack(@RequestBody String jsonStr) {
+      System.out.println("Receive a callback request!");
+      System.out.println("Callback body: " + jsonStr); 
+      return ResponseEntity.ok(200);
+  }
+
+  @RequestMapping(value = "/mode2")
+  @ResponseBody
+  public ResponseEntity mode2CallBack(@RequestParam("file") MultipartFile file, @RequestParam("result") MultipartFile json) {
+      try {
+          System.out.println("Receive a callback request!");
+          // Receive the result json file
+          String jsonStr = new String(json.getBytes());
+          System.out.println("Callback body: " + jsonStr);
+
+          // Receive the file bytes
+          System.out.println("Callback fileName: " + file.getOriginalFilename());
+          Bytes[] fileBytes = file.getBytes());
+          return ResponseEntity.ok(200);
+          } catch (IOException e) {
+              e.printStackTrace();
+              return ResponseEntity.ok(500);
+          }
+  }
+}
+```
+
 [apidocs]: https://idp-sea.6estates.com/docs#/
+[callbackdocs]: https://idp-sea.6estates.com/docs#/extract/extraction?id=_212-callback-process
+
 
