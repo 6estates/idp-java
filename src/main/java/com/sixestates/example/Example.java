@@ -6,6 +6,7 @@ import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
 import com.sixestates.rest.v1.ExtractSubmitter;
 import com.sixestates.rest.v1.ResultExtractor;
+import com.sixestates.type.ResultDTO;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
 import java.io.FileInputStream;
@@ -64,19 +65,25 @@ public class Example {
         System.out.println("taskId: " + taskDto.getData());
 
         // Extract the result
-        if( taskDto.getStatus() == 200) {
-            try {
-                String respJson = ResultExtractor.extractResultByTaskid(taskDto.getData());
-                System.out.println(respJson);
-            }catch (ApiException e){
+        if(taskDto.getStatus() == 200) {
+            try{
+                boolean taskDone = false;
+                while(!taskDone){
+                    String taskId = taskDto.getData();
+                    ResultDTO resultDto = ResultExtractor.extractResultByTaskid(taskId);
+
+                    if(resultDto.getTaskStatus().equals("Done")) {
+                        //Print the response json string
+                        System.out.println(resultDto.getRespJson());
+                        taskDone = true;
+                    }else {
+                        System.out.println("The status is Doing or Init, please request again after 30 seconds ");
+                        Thread.sleep( 1000 * 30);
+                    }
+                }
+            }catch(ApiException e ){
                 System.err.println(e);
             }
-
-            // Wait until the task done
-            Thread.sleep( 1000 * 60 * 3 );
-            String respJson = ResultExtractor.extractResultByTaskid(taskDto.getData());
-            //Print the response json string
-            System.out.println(respJson);
         }
 
         // Submit task using InputStream

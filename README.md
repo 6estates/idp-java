@@ -25,7 +25,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>0.0.2</version>
+      <version>0.0.3</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -114,14 +114,23 @@ try {
 ### Query The Extraction Result with the Task ID
 
 ``` java
-if(taskDto.getStatus() == 200){
-    try{
-        String respJson=ResultExtractor.extractResultByTaskid(taskDto.getData());
-        System.out.println(respJson);
-    }catch(ApiException e){
-        System.err.println(e);
-    }
-}
+try{
+     boolean taskDone = false;
+     while(!taskDone){
+         String taskId = "12345";
+         ResultDTO resultDto = ResultExtractor.extractResultByTaskid(taskId);
+         if(resultDto.getTaskStatus().equals("Done")) {
+             //Print the response json string
+             System.out.println(resultDto.getRespJson());
+             taskDone = true;
+         }else {
+             System.out.println("The status is Doing or Init, please request again after 30 seconds ");
+             Thread.sleep( 1000 * 30);
+         }
+     }
+ }catch(ApiException e ){
+     System.err.println(e);
+ }
 ```
 
 ### Recieve The Result from Callback

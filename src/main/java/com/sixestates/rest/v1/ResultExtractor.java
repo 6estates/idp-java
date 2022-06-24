@@ -5,14 +5,14 @@ import com.sixestates.Idp;
 import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
 import com.sixestates.exception.RestException;
-import com.sixestates.http.HttpMethod;
-import com.sixestates.http.IdpRestClient;
-import com.sixestates.http.Request;
-import com.sixestates.http.Response;
+import com.sixestates.http.*;
+import com.sixestates.type.ResultDTO;
 import org.apache.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResultExtractor {
-
+    private static final Logger logger = LoggerFactory.getLogger(ResultExtractor.class);
     private ResultExtractor() {}
 
     /**
@@ -21,7 +21,7 @@ public class ResultExtractor {
      * @param taskId The taskId of a submitted task
      * @return Response json string
      */
-    public static String extractResultByTaskid(final String taskId) {
+    public static ResultDTO extractResultByTaskid(final String taskId) {
         if(taskId == null) {
             throw new ApiException("taskId can not be null");
         }
@@ -33,9 +33,9 @@ public class ResultExtractor {
      * Execute a request using default client by taskId.
      *
      * @param client HttpClient object
-     * @return Response json string
+     * @return resultDto response dto
      */
-    private static String run(final IdpRestClient client, String taskId) {
+    private static ResultDTO run(final IdpRestClient client, String taskId) {
         Request request = new Request(
                 HttpMethod.GET,
                 Idp.getExtractUrl() + taskId
@@ -54,14 +54,15 @@ public class ResultExtractor {
         }
 
         String respJson = response.getContent();
-        String status = JSONObject.parseObject(respJson).getJSONObject("data").getString("status");
-
-        if(status.equals("Init") || status.equals("Doing")) {
-            throw new ApiException("Task " + status + ", please request again after 30 seconds");
-        } else if(status.equals("Fail")) {
-            throw new ApiException("Task " + status + ", please contact us to resolve the problem");
+        String taskStatus = JSONObject.parseObject(respJson).getJSONObject("data").getString("taskStatus");
+        ResultDTO resultDto = ResultDTO.builder().taskStatus(taskStatus).respJson(respJson).build();
+        if(taskStatus.equals("Init") || taskStatus.equals("Doing")) {
+            logger.debug("TaskId " + taskId + ": " + taskStatus + ", please request again after 30 seconds");
+            return resultDto;
+        } else if(taskStatus.equals("Fail")) {
+            throw new ApiException("TaskId " + taskId + ": " + taskStatus + ", please contact us to resolve the problem");
         }
-        return respJson;
+        logger.debug("TaskId " + taskId + ": " + taskStatus);
+        return resultDto;
     }
-
 }
