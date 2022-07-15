@@ -3,6 +3,8 @@ package com.sixestates.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.SocketConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,24 @@ public class IdpRestClient {
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         this.httpClient = new NetworkHttpClient();
+    }
+
+    /**
+     * New a IdpRestClient.
+     *
+     * @param customer Idp customer
+     * @param customerParam
+     * @param token Idp client token
+     * @param requestConfig httpclient config
+     * @param socketConfig httpclient SocketConfig
+     */
+    public IdpRestClient(final String customer, final String customerParam, final String token, final RequestConfig requestConfig, final SocketConfig socketConfig) {
+        this.customer = customer;
+        this.customerParam = customerParam;
+        this.token = token;
+        this.objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        this.httpClient = new NetworkHttpClient(requestConfig, socketConfig);
     }
 
     /**
