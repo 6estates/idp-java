@@ -11,7 +11,7 @@ import com.sixestates.http.IdpRestClient;
  */
 public class Idp {
 
-    public static final String VERSION = "0.0.4";
+    public static final String VERSION = "0.0.5";
     public static final String JAVA_VERSION = System.getProperty("java.version");
 
     private static String customer = System.getenv("IDP_CUSTOMER");
