@@ -11,10 +11,12 @@ The documentation for the 6Estates IDP API can be found [here][apidocs].
 
 This library supports the following Java implementations:
 
+* OpenJDK 8
 * OpenJDK 11
+* OracleJDK 8
 * OracleJDK 11
 
-
+For Java 8 support, use idp-sdk major version 8.X.X.
 ## Installation
 
 ### Adding idp-java with Maven.
