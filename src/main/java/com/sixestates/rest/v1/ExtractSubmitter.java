@@ -96,6 +96,10 @@ public class ExtractSubmitter {
         if(taskInfo.isHitl()) {
             request.addPostParam("hitl", "true");
         }
+        
+        if(taskInfo.getAutoChecks() != 0) {
+            request.addPostParam("autoChecks", String.valueOf(taskInfo.getAutoChecks()));
+        }
     }
 
 }
