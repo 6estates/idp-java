@@ -31,4 +31,6 @@ public class TaskInfo implements Serializable {
     private int callbackMode;
 
     private boolean hitl;
+    
+    private int autoChecks;
 }
