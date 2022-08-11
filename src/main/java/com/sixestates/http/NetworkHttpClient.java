@@ -167,12 +167,12 @@ public class NetworkHttpClient extends HttpClient {
             builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
         }
         builder.addTextBody("fileType", fileType);
-        if(Idp.getCustomer() != null) {
-            builder.addTextBody("customer", Idp.getCustomer());
+        if(request.getPostParams().containsKey("customer")) {
+            builder.addTextBody("customer", request.getPostParams().get("customer").get(0));
         }
 
-        if(Idp.getCustomerParam() != null) {
-            builder.addTextBody("customerParam", Idp.getCustomerParam());
+        if(request.getPostParams().containsKey("customerParam")) {
+            builder.addTextBody("customerParam", request.getPostParams().get("customerParam").get(0));
         }
 
         if(request.getPostParams().containsKey("callback")) {
@@ -185,6 +185,11 @@ public class NetworkHttpClient extends HttpClient {
         if(request.getPostParams().containsKey("hitl")) {
             builder.addTextBody("hitl", "true");
         }
+        
+        if(request.getPostParams().containsKey("autoChecks")) {
+            builder.addTextBody("autoChecks", request.getPostParams().get("autoChecks").get(0));
+        }
+
 
         // Construct Http body
         HttpPost httpPost = new HttpPost(request.getUrl());
