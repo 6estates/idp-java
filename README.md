@@ -55,7 +55,7 @@ If you run into trouble with local tests, use:
 ## Quickstart
 
 ### Initialize the 6Estates IDP Client
-
+#### 6E API Access Token(Deprecated)
 ``` java
 
 import com.sixestates.Idp;
@@ -64,6 +64,20 @@ import com.sixestates.Idp;
 String yourAccessToken = "XXXXXX"; 
 
 Idp.init(yourAccessToken);
+```
+
+#### 6E API Authorization based on oauth 2.0
+``` java
+
+import com.sixestates.Idp;
+import com.sixestates.utils.OauthUtils;
+
+// Please update your OAuth Authorization on 6Estates Oauth Client Manage
+String yourOAuthAuthorization = "XXXXXX"; 
+
+OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(yourOAuthAuthorization);
+String authorization = oauthDTO.getData().getValue();
+Idp.initAuthorization(authorization);
 ```
 
 ### Submit a Task
