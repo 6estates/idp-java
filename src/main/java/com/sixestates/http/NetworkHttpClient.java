@@ -104,7 +104,12 @@ public class NetworkHttpClient extends HttpClient {
                 .setUri(request.constructURL().toString());
 
         if (request.requiresAuthentication()) {
-            builder.addHeader("X-ACCESS-TOKEN", request.getToken());
+            if(request.getIsOauth()){
+                builder.addHeader("Authorization", request.getToken());
+            }
+            else {
+                builder.addHeader("X-ACCESS-TOKEN", request.getToken());
+            }
         }
 
         for (Map.Entry<String, List<String>> entry : request.getHeaderParams().entrySet()) {
@@ -195,8 +200,11 @@ public class NetworkHttpClient extends HttpClient {
         HttpPost httpPost = new HttpPost(request.getUrl());
         HttpEntity entity = builder.build();
         httpPost.setEntity(entity);
-        httpPost.addHeader("X-ACCESS-TOKEN", request.getToken());
-
+        if(request.getIsOauth()) {
+            httpPost.addHeader("Authorization", request.getToken());
+        }else {
+            httpPost.addHeader("X-ACCESS-TOKEN", request.getToken());
+        }
 
         HttpResponse response = null;
         try {

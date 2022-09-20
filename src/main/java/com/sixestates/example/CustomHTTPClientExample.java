@@ -29,7 +29,7 @@ public class CustomHTTPClientExample {
                 .setSoTimeout(SOCKET_TIMEOUT)
                 .build();
 
-        IdpRestClient idpRestClient = new IdpRestClient(customer,customerParam,TOKEN, requestConfig, socketConfig);
+        IdpRestClient idpRestClient = new IdpRestClient(customer,customerParam,TOKEN, false, requestConfig, socketConfig);
         Idp.setRestClient(idpRestClient);
         // Do submit or request result
     }

@@ -23,6 +23,7 @@ public class IdpRestClient {
     private final String customer;
     private final String customerParam;
     private final String token;
+    private final boolean isOauth;
     private final HttpClient httpClient;
     private static final Logger logger = LoggerFactory.getLogger(IdpRestClient.class);
 
@@ -32,11 +33,13 @@ public class IdpRestClient {
      * @param customer Idp customer
      * @param customerParam
      * @param token Idp client token
+     * @param isOauth Idp client authorization
      */
-    public IdpRestClient(final String customer, final String customerParam, final String token) {
+    public IdpRestClient(final String customer, final String customerParam, final String token, final boolean isOauth) {
         this.customer = customer;
         this.customerParam = customerParam;
         this.token = token;
+        this.isOauth = isOauth;
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         this.httpClient = new NetworkHttpClient();
@@ -51,10 +54,11 @@ public class IdpRestClient {
      * @param requestConfig httpclient config
      * @param socketConfig httpclient SocketConfig
      */
-    public IdpRestClient(final String customer, final String customerParam, final String token, final RequestConfig requestConfig, final SocketConfig socketConfig) {
+    public IdpRestClient(final String customer, final String customerParam, final String token, final boolean isOauth, final RequestConfig requestConfig, final SocketConfig socketConfig) {
         this.customer = customer;
         this.customerParam = customerParam;
         this.token = token;
+        this.isOauth = isOauth;
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         this.httpClient = new NetworkHttpClient(requestConfig, socketConfig);
@@ -67,7 +71,7 @@ public class IdpRestClient {
      * @return Response object
      */
     public Response request(final Request request) {
-        request.setAuth(token);
+        request.setAuth(token, isOauth);
         logRequest(request);
         Response response = httpClient.reliableRequest(request);
 

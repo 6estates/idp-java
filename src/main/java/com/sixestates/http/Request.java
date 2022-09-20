@@ -16,10 +16,10 @@ public class Request {
     private final String url;
     private final Map<String, List<String>> postParams;
     private final Map<String, List<String>> headerParams;
-    private  InputStream inputStream;
+    private InputStream inputStream;
     private boolean isSubmit = false;
+    private boolean isOauth = true;
     private  String token;
-
 
 
     /**
@@ -63,12 +63,17 @@ public class Request {
         return this.isSubmit;
     }
 
+    public boolean getIsOauth() {
+        return this.isOauth;
+    }
+
     public void setIsSubmit(boolean isSubmit) {
         this.isSubmit = isSubmit;
     }
 
-    public void setAuth(final String token) {
+    public void setAuth(final String token, final boolean isOauth) {
         this.token = token;
+        this.isOauth = isOauth;
     }
 
     public boolean requiresAuthentication() {
