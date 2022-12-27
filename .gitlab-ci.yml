@@ -1,7 +1,6 @@
 stages:
-  - codestyle
+  # - codestyle
   - test
-  - build
   - deploy
 
 variables:
