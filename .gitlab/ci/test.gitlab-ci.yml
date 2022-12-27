@@ -1,6 +1,9 @@
 test:
   stage: test
-  script: mvn clean install
+  script:
+    - java -version
+    - mvn -version 
+    - mvn clean install
   only:
   - master
   - ych
