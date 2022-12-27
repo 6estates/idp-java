@@ -1,0 +1,6 @@
+deploy:
+  stage: deploy
+  script: mvn clean deploy
+  only:
+  - master
+  - ych

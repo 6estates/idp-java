@@ -1,0 +1,27 @@
+stages:
+  - codestyle
+  - test
+  - build
+  - deploy
+
+variables:
+  GIT_DEPTH: "20"
+  GIT_SUBMODULE_STRATEGY: "none"
+  GET_SOURCES_ATTEMPTS: "3"
+  # local gitlab ci functions path
+  LOCAL_CI_FUNCS_PATH: .gitlab-ci-functions
+  # java codestyle check path
+  JAVA_CODESTYLE_CHECK_PATH: backend/src/main/java
+
+include:
+  # register bash functions and local ci functions
+  - project: infrastructure/gitlab-ci-functions
+    ref: master
+    file: templates/.register-gitlab-ci.yml
+  # java codestyle check
+  - project: infrastructure/code-style/java-code-style-checker
+    ref: master
+    file: templates/codestyle-docker.gitlab-ci.yml
+  - local: .gitlab/ci/test.gitlab-ci.yml
+  - local: .gitlab/ci/deploy.gitlab-ci.yml
+
