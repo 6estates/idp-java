@@ -1,8 +1,7 @@
 test:
   stage: test
+  image: gcr.io/sixdocker/maven3-openjdk11
   script:
-    - java -version
-    - mvn -version 
     - mvn clean install
   only:
   - master

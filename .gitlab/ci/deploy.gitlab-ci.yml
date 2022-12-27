@@ -1,5 +1,6 @@
 deploy:
   stage: deploy
+  image: gcr.io/sixdocker/maven3-openjdk11
   script: mvn clean deploy
   only:
   - master
