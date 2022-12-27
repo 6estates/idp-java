@@ -1,8 +1,8 @@
 test:
   stage: test
   script:
-    - java --version
-    - mvn --version 
+    - java -version
+    - mvn -version 
     - mvn clean install
   only:
   - master
