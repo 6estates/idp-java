@@ -11,7 +11,7 @@ variables:
   # local gitlab ci functions path
   LOCAL_CI_FUNCS_PATH: .gitlab-ci-functions
   # java codestyle check path
-  JAVA_CODESTYLE_CHECK_PATH: backend/src/main/java
+  JAVA_CODESTYLE_CHECK_PATH: src/main/java
 
 include:
   # register bash functions and local ci functions
