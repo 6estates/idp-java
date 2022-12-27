@@ -1,0 +1,6 @@
+test:
+  stage: test
+  script: mvn clean install
+  only:
+  - master
+  - ych
