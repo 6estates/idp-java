@@ -18,30 +18,47 @@
         </license>
     </licenses>
 
-    <scm>
-        <url>git@github.com:6estates/idp-java.git</url>
-        <connection>scm:git:git@github.com:6estates/idp-java.git</connection>
-        <developerConnection>scm:git:git@github.com:6estates/idp-java.git</developerConnection>
-        <tag>0.0.1</tag>
-    </scm>
+<!--    <scm>-->
+<!--        <url>git@github.com:6estates/idp-java.git</url>-->
+<!--        <connection>scm:git:git@github.com:6estates/idp-java.git</connection>-->
+<!--        <developerConnection>scm:git:git@github.com:6estates/idp-java.git</developerConnection>-->
+<!--        <tag>0.0.1</tag>-->
+<!--    </scm>-->
 
-    <developers>
-        <developer>
-            <name>anyangli</name>
-            <email>411746630@qq.com</email>
-        </developer>
-    </developers>
+<!--    <developers>-->
+<!--        <developer>-->
+<!--            <name>anyangli</name>-->
+<!--            <email>411746630@qq.com</email>-->
+<!--        </developer>-->
+<!--    </developers>-->
+
+    <repositories>
+        <repository>
+            <id>nexus-releases</id>
+            <name>nexus-releases</name>
+            <url>https://repos.6estates.com/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>nexus-snapshot</id>
+            <name>nexus-snapshot</name>
+            <url>https://repos.6estates.com/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>com.e-iceblue</id>
+            <name>e-iceblue</name>
+            <url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
+        </repository>
+
+    </repositories>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>maven-public</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
         <repository>
-            <id>maven-public</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>nexus-releases</id>
+            <name>nexus-releases</name>
+            <url>https://repos.6estates.com/nexus/content/repositories/releases/</url>
         </repository>
     </distributionManagement>
+
 
 
     <properties>
