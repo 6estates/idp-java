@@ -18,9 +18,9 @@ include:
     ref: master
     file: templates/.register-gitlab-ci.yml
   # java codestyle check
-  - project: infrastructure/code-style/java-code-style-checker
-    ref: master
-    file: templates/codestyle-docker.gitlab-ci.yml
+ # - project: infrastructure/code-style/java-code-style-checker
+ #   ref: master
+ #   file: templates/codestyle-docker.gitlab-ci.yml
   - local: .gitlab/ci/test.gitlab-ci.yml
   - local: .gitlab/ci/deploy.gitlab-ci.yml
 
