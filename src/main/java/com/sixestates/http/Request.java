@@ -2,6 +2,7 @@ package com.sixestates.http;
 
 import com.sixestates.exception.ApiException;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -14,9 +15,10 @@ public class Request {
     private static final String DEFAULT_REGION = "EN";
     private final HttpMethod method;
     private final String url;
+    private List<File> files;
     private final Map<String, List<String>> postParams;
     private final Map<String, List<String>> headerParams;
-    private InputStream inputStream;
+    private Map<String, InputStream> inputStreamMap;
     private boolean isSubmit = false;
     private boolean isOauth = true;
     private  String token;
@@ -28,10 +30,10 @@ public class Request {
      * @param method HTTP method
      * @param url    url of request
      */
-    public Request(final HttpMethod method, final String url, InputStream inputStream) {
+    public Request(final HttpMethod method, final String url, Map<String, InputStream> inputStreamMap) {
         this.method = method;
         this.url = url;
-        this.inputStream = inputStream;
+        this.inputStreamMap = inputStreamMap;
         this.postParams = new HashMap<>();
         this.headerParams = new HashMap<>();
     }
@@ -51,8 +53,8 @@ public class Request {
         return this.url;
     }
 
-    public InputStream getInputStream() {
-        return this.inputStream;
+    public Map<String, InputStream> getInputStreamMap() {
+        return inputStreamMap;
     }
 
     public String getToken() {
@@ -69,6 +71,14 @@ public class Request {
 
     public void setIsSubmit(boolean isSubmit) {
         this.isSubmit = isSubmit;
+    }
+
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 
     public void setAuth(final String token, final boolean isOauth) {

@@ -12,6 +12,7 @@ import com.sixestates.http.Request;
 import com.sixestates.http.Response;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
+import com.sixestates.utils.StringUtils;
 import org.apache.http.HttpHeaders;
 
 
@@ -43,7 +44,7 @@ public class ExtractSubmitter {
         Request request = new Request(
                 HttpMethod.POST,
                 Idp.getSubmitUrl(),
-                taskInfo.getInputStream()
+                taskInfo.getInputStreamMap()
         );
         request.setIsSubmit(true);
         addHeaderParams(request);
@@ -77,8 +78,7 @@ public class ExtractSubmitter {
      * @param request Request to add post params to
      */
     private static void addPostParams(final Request request, TaskInfo taskInfo) {
-        request.addPostParam("fileName", taskInfo.getFileName());
-        request.addPostParam("filePath", taskInfo.getFilePath());
+        request.setFiles(taskInfo.getFiles());
         request.addPostParam("fileType", taskInfo.getFileType());
         if(taskInfo.getCustomer() != null) {
             request.addPostParam("customer", taskInfo.getCustomer());
@@ -93,6 +93,10 @@ public class ExtractSubmitter {
             request.addPostParam("callbackMode", String.valueOf(taskInfo.getCallbackMode()));
         }
 
+        if (taskInfo.getAutoCallback() != null) {
+            request.addPostParam("autoCallback", String.valueOf(taskInfo.getAutoCallback()));
+        }
+
         if(taskInfo.isHitl()) {
             request.addPostParam("hitl", "true");
         }
@@ -100,6 +104,23 @@ public class ExtractSubmitter {
         if(taskInfo.getAutoChecks() != 0) {
             request.addPostParam("autoChecks", String.valueOf(taskInfo.getAutoChecks()));
         }
+
+        if(taskInfo.getExtractMode() != null) {
+            request.addPostParam("extractMode", String.valueOf(taskInfo.getExtractMode()));
+        }
+
+        if (taskInfo.getFileTypeFrom() != null) {
+            request.addPostParam("fileTypeFrom", String.valueOf(taskInfo.getFileTypeFrom()));
+        }
+
+        if(StringUtils.isNotEmpty(taskInfo.getIncludingFieldCodes())) {
+            request.addPostParam("includingFieldCodes", taskInfo.getIncludingFieldCodes());
+        }
+
+        if (StringUtils.isNotEmpty(taskInfo.getRemark())) {
+            request.addPostParam("remark", taskInfo.getRemark());
+        }
+
     }
 
 }

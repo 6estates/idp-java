@@ -5,6 +5,9 @@ import com.sixestates.rest.v1.CallBackSocketServer;
 import com.sixestates.rest.v1.ExtractSubmitter;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
+import com.sixestates.utils.Lists;
+
+import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CallBackSocketServerExample {
@@ -27,16 +30,14 @@ public class CallBackSocketServerExample {
         TaskDTO taskDto = null;
 
         TaskInfo taskInfo1 = TaskInfo.builder()
-                .fileName(FILE_NAME)
-                .filePath(FILE_PATH)
+                .files(Lists.newArrayList(new File(FILE_PATH)))
                 .fileType(FILE_TYPE)
                 .build();
         taskDto = ExtractSubmitter.submit(taskInfo1);
         System.out.println("taskId: " + taskDto.getData());
 
         TaskInfo taskInfo2 = TaskInfo.builder()
-                .fileName(FILE_NAME)
-                .filePath(FILE_PATH)
+                .files(Lists.newArrayList(new File(FILE_PATH)))
                 .fileType(FILE_TYPE)
                 .callback(CALLBACK_URL)
                 .build();
@@ -44,8 +45,7 @@ public class CallBackSocketServerExample {
         System.out.println("taskId: " + taskDto.getData());
 
         TaskInfo taskInfo3 = TaskInfo.builder()
-                .fileName(FILE_NAME)
-                .filePath(FILE_PATH)
+                .files(Lists.newArrayList(new File(FILE_PATH)))
                 .fileType(FILE_TYPE)
                 .callback(CALLBACK_URL)
                 .callbackMode(0)
@@ -54,8 +54,7 @@ public class CallBackSocketServerExample {
         System.out.println("taskId: " + taskDto.getData());
 
         TaskInfo taskInfo4 = TaskInfo.builder()
-                .fileName(FILE_NAME)
-                .filePath(FILE_PATH)
+                .files(Lists.newArrayList(new File(FILE_PATH)))
                 .fileType(FILE_TYPE)
                 .callback(CALLBACK_URL)
                 .callbackMode(1)
@@ -64,8 +63,7 @@ public class CallBackSocketServerExample {
         System.out.println("taskId: " + taskDto.getData());
 
         TaskInfo taskInfo5 = TaskInfo.builder()
-                .fileName(FILE_NAME)
-                .filePath(FILE_PATH)
+                .files(Lists.newArrayList(new File(FILE_PATH)))
                 .fileType(FILE_TYPE)
                 .callback(CALLBACK_URL)
                 .callbackMode(2)

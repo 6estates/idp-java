@@ -5,11 +5,13 @@ import com.sixestates.exception.ApiException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.sixestates.utils.CollectionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -161,39 +163,44 @@ public class NetworkHttpClient extends HttpClient {
         builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-        String fileName = request.getPostParams().get("fileName").get(0);
-        String filePath = request.getPostParams().get("filePath").get(0);
-        String fileType = request.getPostParams().get("fileType").get(0);
-        if(filePath != null) {
-            logger.debug("filePath: " + filePath);
-            File file = new File(filePath);
-            builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
-        }else if(request.getInputStream() != null) {
-            builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
+        List<File> files = request.getFiles();
+        if (!CollectionUtils.isEmpty(files)) {
+            for (File file : files) {
+                builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, file.getName());
+            }
+        } else if(request.getInputStreamMap() != null) {
+            for (Map.Entry<String, InputStream> entry : request.getInputStreamMap().entrySet()) {
+                builder.addBinaryBody("file", entry.getValue(), ContentType.MULTIPART_FORM_DATA, entry.getKey());
+            }
         }
-        builder.addTextBody("fileType", fileType);
-        if(request.getPostParams().containsKey("customer")) {
-            builder.addTextBody("customer", request.getPostParams().get("customer").get(0));
+        for (Map.Entry<String, List<String>> entry : request.getPostParams().entrySet()) {
+            for (String value : entry.getValue()) {
+                builder.addTextBody(entry.getKey(), value);
+            }
         }
-
-        if(request.getPostParams().containsKey("customerParam")) {
-            builder.addTextBody("customerParam", request.getPostParams().get("customerParam").get(0));
-        }
-
-        if(request.getPostParams().containsKey("callback")) {
-            String callBackUrl = request.getPostParams().get("callback").get(0);
-            String callBackMode = request.getPostParams().get("callbackMode").get(0);
-            builder.addTextBody("callback", callBackUrl);
-            builder.addTextBody("callbackMode", callBackMode);
-        }
-
-        if(request.getPostParams().containsKey("hitl")) {
-            builder.addTextBody("hitl", "true");
-        }
-        
-        if(request.getPostParams().containsKey("autoChecks")) {
-            builder.addTextBody("autoChecks", request.getPostParams().get("autoChecks").get(0));
-        }
+//        builder.addTextBody("fileType", fileType);
+//        if(request.getPostParams().containsKey("customer")) {
+//            builder.addTextBody("customer", request.getPostParams().get("customer").get(0));
+//        }
+//
+//        if(request.getPostParams().containsKey("customerParam")) {
+//            builder.addTextBody("customerParam", request.getPostParams().get("customerParam").get(0));
+//        }
+//
+//        if(request.getPostParams().containsKey("callback")) {
+//            String callBackUrl = request.getPostParams().get("callback").get(0);
+//            String callBackMode = request.getPostParams().get("callbackMode").get(0);
+//            builder.addTextBody("callback", callBackUrl);
+//            builder.addTextBody("callbackMode", callBackMode);
+//        }
+//
+//        if(request.getPostParams().containsKey("hitl")) {
+//            builder.addTextBody("hitl", "true");
+//        }
+//
+//        if(request.getPostParams().containsKey("autoChecks")) {
+//            builder.addTextBody("autoChecks", request.getPostParams().get("autoChecks").get(0));
+//        }
 
 
         // Construct Http body

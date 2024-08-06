@@ -9,9 +9,14 @@ import com.sixestates.type.OauthDTO;
 import com.sixestates.type.ResultDTO;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
+import com.sixestates.utils.Lists;
 import com.sixestates.utils.OauthUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OauthExample {
     public static final String AUTHORIZATION = "XXXXXXX";
@@ -35,8 +40,7 @@ public class OauthExample {
         TaskDTO taskDto = null;
         try {
             TaskInfo taskInfo = TaskInfo.builder()
-                    .fileName(FILE_NAME)
-                    .filePath(FILE_PATH)
+                    .files(Lists.newArrayList(new File(FILE_PATH)))
                     .fileType(FILE_TYPE)
                     .hitl(true)
                     .build();
@@ -60,8 +64,7 @@ public class OauthExample {
 
         // Submit the  new task
         TaskInfo taskInfo = TaskInfo.builder()
-                .fileName("1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
-                .filePath("/home/Documents/1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
+                .files(Lists.newArrayList(new File("/home/Documents/1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")))
                 .fileType("CBKS")
                 .build();
         taskDto = ExtractSubmitter.submit(taskInfo);
@@ -90,13 +93,14 @@ public class OauthExample {
         }
 
         // Submit task using InputStream
+
+        Map<String, InputStream> inputStreamMap = new HashMap<>();
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(FILE_PATH);
-
+            inputStreamMap.put("acount_statement_mandiri.pdf", fis);
             taskInfo = TaskInfo.builder()
-                    .fileName("acount_statement_mandiri.pdf")
-                    .inputStream(fis)
+                    .inputStreamMap(inputStreamMap)
                     .fileType("CBKS")
                     .build();
 
