@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.0.8</version>
+      <version>8.1.0</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -84,14 +84,12 @@ Idp.initAuthorization(authorization);
 
 #### Submit a Local File 
 ``` java
-String fileName = "xxx.pdf";
 String filePath = "/home/Documents/xxx.pdf" ;
 String fileType = "CBKS";
 
 try {
     TaskInfo taskInfo = TaskInfo.builder()
-        .fileName(fileName)
-        .filePath(filePath)
+        .files(Lists.newArrayList(new File(filePath)))
         .fileType(fileType)
         .build();
         
@@ -111,8 +109,7 @@ try {
     fis = new FileInputStream(FILE_PATH);
 
     TaskInfo taskInfo = TaskInfo.builder()
-            .fileName("xxx.pdf")
-            .inputStream(fis)
+            .fileInfos(Lists.newArrayList(new FileInfo("xxx.pdf", fis)))
             .fileType("CBKS")
             .build();
 
@@ -162,8 +159,7 @@ String CALLBACK_URL = "http://xxx.com";
 Int CALLBACK_MODE = 1;
 
 TaskInfo taskInfo = TaskInfo.builder()
-        .fileName(FILE_NAME)
-        .filePath(FILE_PATH)
+        .files(Lists.newArrayList(new File(filePath)))
         .fileType(FILE_TYPE)
         .callback(CALLBACK_URL)
         .callbackMode(CALLBACK_MODE)
@@ -227,6 +223,47 @@ public class CallBackController {
               return ResponseEntity.ok(500);
           }
   }
+}
+```
+
+### Submit FAAS Task
+
+#### Submit Local Files
+``` java
+
+TaskDTO taskDto = null;
+try {
+    FAASTaskInfo taskInfo = FAASTaskInfo.builder()
+            .files(Lists.newArrayList(new File(filePath)))
+            .customerType("2")
+            .informationType(0)
+            .build();
+    taskDto = FAASSubmitter.submitFAASTask(taskInfo);
+
+    System.out.println("taskId: " + taskDto.getData());
+}catch (final ApiException | ApiConnectionException e) {
+    System.err.println(e);
+}
+```
+
+#### Submit Files with InputStream 
+
+``` java
+String fileName = "xxx.pdf";
+String filePath = "/home/Documents/xxx.pdf" ;
+
+TaskDTO taskDto = null;
+try {
+    FAASTaskInfo taskInfo = FAASTaskInfo.builder()
+            .fileInfos(Lists.newArrayList(new FileInfo(fileName, new FileInputStream(filePath))))
+            .customerType("2")
+            .informationType(0)
+            .build();
+    taskDto = FAASSubmitter.submitFAASTask(taskInfo);
+
+    System.out.println("taskId: " + taskDto.getData());
+}catch (final ApiException | ApiConnectionException e) {
+    System.err.println(e);
 }
 ```
 

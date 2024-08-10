@@ -1,9 +1,8 @@
 package com.sixestates.http;
 
 import com.sixestates.exception.ApiException;
+import com.sixestates.type.FileInfo;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,10 +14,9 @@ public class Request {
     private static final String DEFAULT_REGION = "EN";
     private final HttpMethod method;
     private final String url;
-    private List<File> files;
     private final Map<String, List<String>> postParams;
     private final Map<String, List<String>> headerParams;
-    private Map<String, InputStream> inputStreamMap;
+    private Map<String, List<FileInfo>> fileInfoMap;
     private boolean isSubmit = false;
     private boolean isOauth = true;
     private  String token;
@@ -30,10 +28,10 @@ public class Request {
      * @param method HTTP method
      * @param url    url of request
      */
-    public Request(final HttpMethod method, final String url, Map<String, InputStream> inputStreamMap) {
+    public Request(final HttpMethod method, final String url, Map<String, List<FileInfo>> fileInfoMap) {
         this.method = method;
         this.url = url;
-        this.inputStreamMap = inputStreamMap;
+        this.fileInfoMap = fileInfoMap;
         this.postParams = new HashMap<>();
         this.headerParams = new HashMap<>();
     }
@@ -53,10 +51,6 @@ public class Request {
         return this.url;
     }
 
-    public Map<String, InputStream> getInputStreamMap() {
-        return inputStreamMap;
-    }
-
     public String getToken() {
         return this.token;
     }
@@ -73,12 +67,12 @@ public class Request {
         this.isSubmit = isSubmit;
     }
 
-    public List<File> getFiles() {
-        return files;
+    public Map<String, List<FileInfo>> getFileInfoMap() {
+        return fileInfoMap;
     }
 
-    public void setFiles(List<File> files) {
-        this.files = files;
+    public void setFileInfoMap(Map<String, List<FileInfo>> fileInfoMap) {
+        this.fileInfoMap = fileInfoMap;
     }
 
     public void setAuth(final String token, final boolean isOauth) {

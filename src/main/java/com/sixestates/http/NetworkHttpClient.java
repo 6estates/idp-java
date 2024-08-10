@@ -1,17 +1,7 @@
 package com.sixestates.http;
 
-import com.sixestates.Idp;
 import com.sixestates.exception.ApiException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import com.sixestates.utils.CollectionUtils;
+import com.sixestates.type.FileInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -29,6 +19,12 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class NetworkHttpClient extends HttpClient {
     private static final Logger logger = LoggerFactory.getLogger(NetworkHttpClient.class);
@@ -163,14 +159,13 @@ public class NetworkHttpClient extends HttpClient {
         builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-        List<File> files = request.getFiles();
-        if (!CollectionUtils.isEmpty(files)) {
-            for (File file : files) {
-                builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, file.getName());
-            }
-        } else if(request.getInputStreamMap() != null) {
-            for (Map.Entry<String, InputStream> entry : request.getInputStreamMap().entrySet()) {
-                builder.addBinaryBody("file", entry.getValue(), ContentType.MULTIPART_FORM_DATA, entry.getKey());
+        Map<String, List<FileInfo>> fileInfoMap = request.getFileInfoMap();
+        if (fileInfoMap != null) {
+            for (Map.Entry<String, List<FileInfo>> entry : fileInfoMap.entrySet()) {
+                for (FileInfo fileInfo : entry.getValue()) {
+                    builder.addBinaryBody(entry.getKey(), fileInfo.getInputStream(),
+                            ContentType.MULTIPART_FORM_DATA, fileInfo.getFileName());
+                }
             }
         }
         for (Map.Entry<String, List<String>> entry : request.getPostParams().entrySet()) {

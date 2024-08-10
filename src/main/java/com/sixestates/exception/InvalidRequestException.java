@@ -4,10 +4,15 @@ public class InvalidRequestException extends IdpException {
 
     private static final long serialVersionUID = 1L;
 
-    private final String param;
+    private String param;
 
     public InvalidRequestException(final String message) {
         super(message, null);
+        this.param = null;
+    }
+
+    public InvalidRequestException(final String message, final Throwable cause) {
+        super(message, cause);
         this.param = null;
     }
 

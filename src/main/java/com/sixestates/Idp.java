@@ -20,6 +20,7 @@ public class Idp {
     private static String authorization; //oauth2.0 authorization token
     private static boolean isOauth; //oauth2.0 authorization token
     private static String submitUrl = "https://idp-sea.6estates.com/customer/extraction/fields/async";
+    private static String submitFAASUrl = "https://idp-sea.6estates.com/customer/extraction/faas/analysis";
     private static String extractUrl = "https://idp-sea.6estates.com/customer/extraction/field/async/result/";
     private static String oauthUrl = "https://oauth-sea.6estates.com/oauth/token?grant_type=client_bind";
     private static String lang = System.getenv("IDP_LANG");
@@ -171,6 +172,9 @@ public class Idp {
 
     public static synchronized String getCustomerParam() {return customerParam;}
 
+    public static String getSubmitFAASUrl() {
+        return submitFAASUrl;
+    }
 
     /**
      * Returns (and initializes if not initialized) the Idp Rest Client.

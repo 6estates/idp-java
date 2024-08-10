@@ -6,6 +6,7 @@ import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
 import com.sixestates.rest.v1.ExtractSubmitter;
 import com.sixestates.rest.v1.ResultExtractor;
+import com.sixestates.type.FileInfo;
 import com.sixestates.type.ResultDTO;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
@@ -13,9 +14,6 @@ import com.sixestates.utils.Lists;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Example {
 
@@ -89,15 +87,13 @@ public class Example {
             }
         }
 
-        Map<String, InputStream> inputStreamMap = new HashMap<>();
         // Submit task using InputStream
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(FILE_PATH);
-            inputStreamMap.put("acount_statement_mandiri.pdf", fis);
 
             taskInfo = TaskInfo.builder()
-                    .inputStreamMap(inputStreamMap)
+                    .fileInfos(Lists.newArrayList(new FileInfo("acount_statement_mandiri.pdf", fis)))
                     .fileType("CBKS")
                     .build();
 

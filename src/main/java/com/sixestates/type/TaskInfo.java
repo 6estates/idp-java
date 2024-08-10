@@ -20,7 +20,7 @@ public class TaskInfo implements Serializable {
 
     private List<File> files ;
 
-    private Map<String, InputStream> inputStreamMap;
+    private List<FileInfo> fileInfos;
 
     private String fileType;
 

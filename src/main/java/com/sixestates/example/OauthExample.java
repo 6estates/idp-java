@@ -5,10 +5,7 @@ import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
 import com.sixestates.rest.v1.ExtractSubmitter;
 import com.sixestates.rest.v1.ResultExtractor;
-import com.sixestates.type.OauthDTO;
-import com.sixestates.type.ResultDTO;
-import com.sixestates.type.TaskDTO;
-import com.sixestates.type.TaskInfo;
+import com.sixestates.type.*;
 import com.sixestates.utils.Lists;
 import com.sixestates.utils.OauthUtils;
 
@@ -100,7 +97,7 @@ public class OauthExample {
             fis = new FileInputStream(FILE_PATH);
             inputStreamMap.put("acount_statement_mandiri.pdf", fis);
             taskInfo = TaskInfo.builder()
-                    .inputStreamMap(inputStreamMap)
+                    .fileInfos(Lists.newArrayList(new FileInfo("acount_statement_mandiri.pdf", fis)))
                     .fileType("CBKS")
                     .build();
 
