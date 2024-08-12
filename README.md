@@ -230,7 +230,7 @@ public class CallBackController {
 
 #### Submit Local Files
 ``` java
-
+String filePath = "/home/Documents/xxx.pdf" ;
 TaskDTO taskDto = null;
 try {
     FAASTaskInfo taskInfo = FAASTaskInfo.builder()
@@ -262,7 +262,7 @@ try {
     taskDto = FAASSubmitter.submitFAASTask(taskInfo);
 
     System.out.println("taskId: " + taskDto.getData());
-}catch (final ApiException | ApiConnectionException e) {
+}catch (Exception e) {
     System.err.println(e);
 }
 ```
