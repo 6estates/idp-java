@@ -23,6 +23,7 @@ public class Idp {
     private static String submitFAASUrl = "https://idp-sea.6estates.com/customer/extraction/faas/analysis";
     private static String extractUrl = "https://idp-sea.6estates.com/customer/extraction/field/async/result/";
     private static String oauthUrl = "https://oauth-sea.6estates.com/oauth/token?grant_type=client_bind";
+    private static String oauthSafeUrl = "https://oauth-sea.6estates.com/api/token";
     private static String lang = System.getenv("IDP_LANG");
     private static volatile IdpRestClient restClient;
 
@@ -167,6 +168,14 @@ public class Idp {
     public static synchronized String getExtractUrl() {return extractUrl;}
 
     public static synchronized String getOauthUrl() {return oauthUrl;}
+
+    public static synchronized String getOauthSafeUrl() {
+        return oauthSafeUrl;
+    }
+
+    public static synchronized void setOauthSafeUrl(String oauthSafeUrl) {
+        Idp.oauthSafeUrl = oauthSafeUrl;
+    }
 
     public static synchronized String getCustomer() {return customer;}
 

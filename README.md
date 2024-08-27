@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.1.0</version>
+      <version>8.2.0</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -67,6 +67,9 @@ Idp.init(yourAccessToken);
 ```
 
 #### 6E API Authorization based on oauth 2.0
+
+From API versions 8.2.0 provide a more secure way to obtain token, and the Basic authentication method will be deprecated in the future
+
 ``` java
 
 import com.sixestates.Idp;
@@ -75,7 +78,13 @@ import com.sixestates.utils.OauthUtils;
 // Please update your OAuth Authorization on 6Estates Oauth Client Manage
 String yourOAuthAuthorization = "XXXXXX"; 
 
-OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(yourOAuthAuthorization);
+//This method will deprecated in the future
+//OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(yourOAuthAuthorization);
+
+String clientId = "XXXXXX";
+String clientSecret = "XXXXXX";
+//The following method will be a more security way
+OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(clientId, clientSecret);
 String authorization = oauthDTO.getData().getValue();
 Idp.initAuthorization(authorization);
 ```

@@ -29,7 +29,7 @@ public class OauthExample {
      */
     public static void main(String[] args) throws Exception {
 
-        OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(AUTHORIZATION);
+        OauthDTO oauthDTO = OauthUtils.getIDPAuthorization("xxxxxx" , "xxxxxx");
         String authorization = oauthDTO.getData().getValue();
         Idp.initAuthorization(authorization);
         System.out.println("The AUTHORIZATION will expire in " + oauthDTO.getData().getExpiration() + " seconds");

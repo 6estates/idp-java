@@ -6,7 +6,7 @@
 
     <groupId>com.sixestates</groupId>
     <artifactId>idp-sdk</artifactId>
-    <version>8.1.0</version>
+    <version>8.2.0</version>
     <name>idp</name>
     <description>A Java SDK for communicating with the 6Estates Intelligent Document Processing(IDP) Platform</description>
     <url>https://www.6estates.com</url>
@@ -206,7 +206,7 @@
                     </execution>
                 </executions>
             </plugin>
-           <!-- upload mvn repo
+<!--            upload mvn repo-->
            <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-gpg-plugin</artifactId>
@@ -221,7 +221,6 @@
                    </execution>
                </executions>
            </plugin>
-           -->
        </plugins>
    </build>
 </project>

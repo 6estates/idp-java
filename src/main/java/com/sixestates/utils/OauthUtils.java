@@ -6,8 +6,10 @@ import com.alibaba.fastjson.JSON;
 import com.sixestates.Idp;
 import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.AuthenticationException;
+import com.sixestates.type.CreateTokenVO;
 import com.sixestates.type.OauthDTO;
 import java.io.*;
+import java.util.HashMap;
 
 public class OauthUtils {
     public static OauthDTO getIDPAuthorization(String authorizationToken) {
@@ -47,6 +49,21 @@ public class OauthUtils {
             }
         }
 
+        return convert(result);
+    }
+
+    public static OauthDTO getIDPAuthorization(String clientId, String clientSecret) {
+        CreateTokenVO createTokenVO = new CreateTokenVO();
+        createTokenVO.setClientId(clientId);
+        long timestamp = System.currentTimeMillis();
+        createTokenVO.setTimestamp(timestamp);
+        createTokenVO.setSignature(generateSignature(clientId, clientSecret, timestamp));
+
+        String result = HttpClientUtil.postStr(Idp.getOauthSafeUrl(), new HashMap<>(), JSON.toJSONString(createTokenVO));
+        return convert(result);
+    }
+
+    private static OauthDTO convert(String result) {
         OauthDTO oauthDTO = null;
         try {
             oauthDTO = JSON.parseObject(result, OauthDTO.class);
@@ -64,4 +81,13 @@ public class OauthUtils {
         }
         return oauthDTO;
     }
+
+    private static String generateSignature(String clientId, String clientSecret, Long timestamp) {
+        try {
+            return EncryptUtil.buildSHA256Str(clientId + clientSecret + timestamp);
+        } catch (Exception e) {
+            throw new RuntimeException("build encrypt signature error", e);
+        }
+    }
+
 }
