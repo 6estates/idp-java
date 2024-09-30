@@ -6,7 +6,7 @@
 
     <groupId>com.sixestates</groupId>
     <artifactId>idp-sdk</artifactId>
-    <version>8.2.0</version>
+    <version>8.2.1</version>
     <name>idp</name>
     <description>A Java SDK for communicating with the 6Estates Intelligent Document Processing(IDP) Platform</description>
     <url>https://www.6estates.com</url>
