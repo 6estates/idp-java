@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.2.1</version>
+      <version>8.2.2</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -310,6 +310,31 @@ try {
     System.err.println(e);
 }
 ```
+
+### Submit Document Agent Task
+
+#### Submit Local File
+``` java
+String filePath = "/home/Documents/xxx.pdf" ;
+DocAgentInfo docAgentInfo = DocAgentInfo.builder()
+        .file(new File(filePath))
+        .flowCode("DAG16")
+        .build();
+TaskDTO taskDTO = DocAgentApi.submit(docAgentInfo);
+```
+
+#### Get task status
+
+``` java
+TaskResult<DocAgentStatusInfo> taskResult = DocAgentApi.getStatus("DAG226");
+```
+
+#### Export task result file
+
+``` java
+FileInfo fileInfo = DocAgentApi.export("DAG226");
+```
+
 
 [apidocs]: https://idp-sea.6estates.com/docs#/
 [callbackdocs]: https://idp-sea.6estates.com/docs#/extract/extraction?id=_212-callback-process

@@ -21,6 +21,9 @@ public class Idp {
     private static boolean isOauth; //oauth2.0 authorization token
     private static String submitUrl = "https://idp-sea.6estates.com/customer/extraction/fields/async";
     private static String submitFAASUrl = "https://idp-sea.6estates.com/customer/extraction/faas/analysis";
+    public static String submitDocAgentUrl = "https://idp-sea.6estates.com/customer/extraction/doc_agent/analysis";
+    public static String getDocAgentTaskStatusUrl = "https://idp-sea.6estates.com/customer/extraction/doc_agent/status/";
+    public static String exportDocAgentTaskUrl = "https://idp-sea.6estates.com/customer/extraction/doc_agent/analysis/export/";
     private static String extractUrl = "https://idp-sea.6estates.com/customer/extraction/field/async/result/";
     private static String oauthUrl = "https://oauth-sea.6estates.com/oauth/token?grant_type=client_bind";
     private static String oauthSafeUrl = "https://oauth-sea.6estates.com/api/token";
