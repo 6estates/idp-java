@@ -282,7 +282,7 @@ try {
             .customerType("2")
             .informationType(0)
             .build();
-    taskDto = FAASSubmitter.submitFAASTask(taskInfo);
+    taskDto = FAASApi.submitFAASTask(taskInfo);
 
     System.out.println("taskId: " + taskDto.getData());
 }catch (final ApiException | ApiConnectionException e) {
@@ -303,13 +303,20 @@ try {
             .customerType("2")
             .informationType(0)
             .build();
-    taskDto = FAASSubmitter.submitFAASTask(taskInfo);
+    taskDto = FAASApi.submitFAASTask(taskInfo);
 
     System.out.println("taskId: " + taskDto.getData());
 }catch (Exception e) {
     System.err.println(e);
 }
 ```
+
+#### Get FAAS task status
+
+``` java
+FAASTaskStatus taskStatus = FAASApi.getTaskStatus("XXX");
+```
+
 
 ### Submit Document Agent Task
 

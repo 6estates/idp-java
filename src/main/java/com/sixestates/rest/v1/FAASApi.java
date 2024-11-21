@@ -1,6 +1,7 @@
 package com.sixestates.rest.v1;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.sixestates.Idp;
 import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
@@ -10,10 +11,7 @@ import com.sixestates.http.HttpMethod;
 import com.sixestates.http.IdpRestClient;
 import com.sixestates.http.Request;
 import com.sixestates.http.Response;
-import com.sixestates.type.FAASTaskInfo;
-import com.sixestates.type.FileInfo;
-import com.sixestates.type.HttpKey;
-import com.sixestates.type.TaskDTO;
+import com.sixestates.type.*;
 import com.sixestates.utils.CollectionUtils;
 import com.sixestates.utils.StringUtils;
 import org.apache.http.HttpHeaders;
@@ -30,7 +28,7 @@ import java.util.Map;
 /**
  * @author kechen, 09/08/24.
  */
-public class FAASSubmitter {
+public class FAASApi {
     /**
      * Submit FAAS task request using default client.
      *
@@ -39,6 +37,52 @@ public class FAASSubmitter {
     public static TaskDTO submitFAASTask(FAASTaskInfo taskInfo) {
         return submit(Idp.getRestClient(), taskInfo);
     }
+
+    public static FAASTaskStatus getTaskStatus(String taskId) {
+        if (!StringUtils.isNotEmpty(taskId)) {
+            throw new ApiException("taskId can not be null");
+        }
+        return run(Idp.getRestClient(), taskId);
+    }
+
+    /**
+     * Execute a request using default client by applicationId.
+     *
+     * @param client HttpClient object
+     * @return resultDto response dto
+     */
+    private static FAASTaskStatus run(final IdpRestClient client, String applicationId) {
+        Request request = new Request(
+                HttpMethod.GET,
+                Idp.getFAASStatusUrl + applicationId
+        );
+        request.addHeaderParam(HttpHeaders.ACCEPT, "application/json");
+        Response response = client.request(request);
+
+        if (response == null) {
+            throw new ApiConnectionException("Message creation failed: Unable to connect to server");
+        } else if (!IdpRestClient.SUCCESS.test(response.getStatusCode())) {
+            RestException restException = RestException.fromJson(response.getStream(), client.getObjectMapper());
+            if (restException == null) {
+                throw new ApiException("Server Error, no content");
+            }
+            throw new ApiException(restException);
+        }
+
+        return (FAASTaskStatus) convertResponse(response.getContent(), FAASTaskStatus.class).getData();
+    }
+
+    private static <T> TaskResult<T> convertResponse(String response, Class classz) {
+        TaskResult<T> responseObj = JSON.parseObject(response, new TypeReference<TaskResult<T>>(classz) {
+
+        });
+        if (responseObj == null) {
+            throw new ApiException(String.format("Fail to get data response : %s", response));
+        }
+        return responseObj;
+    }
+
+
 
     /**
      * Make the request to the FAAS API.

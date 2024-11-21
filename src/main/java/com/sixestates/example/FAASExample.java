@@ -4,9 +4,10 @@ package com.sixestates.example;
 import com.sixestates.Idp;
 import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
-import com.sixestates.rest.v1.FAASSubmitter;
+import com.sixestates.rest.v1.FAASApi;
 import com.sixestates.rest.v1.ResultExtractor;
 import com.sixestates.type.FAASTaskInfo;
+import com.sixestates.type.FAASTaskStatus;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.utils.Lists;
 
@@ -35,9 +36,11 @@ public class FAASExample {
                     .customerType("2")
                     .informationType(0)
                     .build();
-            taskDto = FAASSubmitter.submitFAASTask(taskInfo);
+            taskDto = FAASApi.submitFAASTask(taskInfo);
 
             System.out.println("taskId: " + taskDto.getData());
+            FAASTaskStatus taskStatus = FAASApi.getTaskStatus("");
+            System.out.println(taskStatus);
         }catch (final ApiException | ApiConnectionException e) {
             System.err.println(e);
         }
