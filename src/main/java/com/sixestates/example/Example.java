@@ -10,8 +10,7 @@ import java.io.InputStream;
 
 public class Example {
 
-//        public static final String TOKEN = "XXXXXXX";
-    public static final String TOKEN = "VIfKfKB/U35E2/xv/ovJbONgONqbx8EugMGcYh3gT7DpL7qM2+lUKDP3e9hNdQpL";
+    public static final String TOKEN = "XXXXXXX";
     public static final String FILE_PATH = "files/CBKS.pdf";
 
     /**
