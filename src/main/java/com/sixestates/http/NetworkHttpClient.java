@@ -1,36 +1,38 @@
 package com.sixestates.http;
 
-import com.sixestates.Idp;
+import com.alibaba.fastjson.JSON;
 import com.sixestates.exception.ApiException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 public class NetworkHttpClient extends HttpClient {
     private static final Logger logger = LoggerFactory.getLogger(NetworkHttpClient.class);
-
     private final org.apache.http.client.HttpClient client;
 
     /**
@@ -61,8 +63,8 @@ public class NetworkHttpClient extends HttpClient {
                 new BasicHeader(HttpHeaders.ACCEPT_ENCODING, "utf-8")
         );
 
-        org.apache.http.impl.client.HttpClientBuilder clientBuilder = HttpClientBuilder.create();
 
+        org.apache.http.impl.client.HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         connectionManager.setDefaultSocketConfig(socketConfig);
         connectionManager.setDefaultMaxPerRoute(10);
@@ -75,6 +77,7 @@ public class NetworkHttpClient extends HttpClient {
                 .setRedirectStrategy(this.getRedirectStrategy())
                 .build();
     }
+
 
     /**
      * Create a new HTTP Client using custom configuration.
@@ -97,34 +100,50 @@ public class NetworkHttpClient extends HttpClient {
      * @param request request to make
      * @return Response of the HTTP request
      */
+    @Override
     public Response makeRequest(final Request request) {
-
         HttpMethod method = request.getMethod();
         RequestBuilder builder = RequestBuilder.create(method.toString())
-                .setUri(request.constructURL().toString());
+            .setUri(request.constructURL().toString());
 
+        // 添加认证头
         if (request.requiresAuthentication()) {
-            if(request.getIsOauth()){
-                builder.addHeader("Authorization", request.getToken());
-            }
-            else {
-                builder.addHeader("X-ACCESS-TOKEN", request.getToken());
-            }
-        }
-
-        for (Map.Entry<String, List<String>> entry : request.getHeaderParams().entrySet()) {
-            for (String value : entry.getValue()) {
-                builder.addHeader(entry.getKey(), value);
-            }
-        }
-
-        if (method == HttpMethod.POST) {
-            builder.addHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
-
-            for (Map.Entry<String, List<String>> entry : request.getPostParams().entrySet()) {
-                for (String value : entry.getValue()) {
-                    builder.addParameter(entry.getKey(), value);
+            String token = request.getToken();
+            if (token != null && !token.isEmpty()) {
+                if (request.getIsOauth()) {
+                    builder.addHeader("Authorization", token);
+                } else {
+                    builder.addHeader("X-ACCESS-TOKEN", token);
                 }
+            }
+        }
+
+        // 添加自定义请求头
+        Map<String, List<String>> headerParams = request.getHeaderParams();
+        if (headerParams != null) {
+            for (Map.Entry<String, List<String>> entry : headerParams.entrySet()) {
+                String headerName = entry.getKey();
+                List<String> headerValues = entry.getValue();
+                if (headerName != null && headerValues != null) {
+                    for (String value : headerValues) {
+                        if (value != null) {
+                            builder.addHeader(headerName, value);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 处理请求体
+        if (method == HttpMethod.POST) {
+            // 处理不同的 Content-Type
+            List<String> contentType = headerParams.get(HttpHeaders.CONTENT_TYPE);
+            if (contentType != null && contentType.contains("application/json")) {
+                // JSON 请求
+                handleJsonBody(builder, request);
+            } else {
+                // 默认使用 form-urlencoded
+                handleFormUrlEncodedBody(builder, request);
             }
         }
 
@@ -133,21 +152,81 @@ public class NetworkHttpClient extends HttpClient {
         try {
             response = client.execute(builder.build());
             HttpEntity entity = response.getEntity();
+
+            // 安全地获取响应内容
+            InputStream contentStream = null;
+            if (entity != null) {
+                try {
+                    contentStream = new BufferedHttpEntity(entity).getContent();
+                } catch (IOException e) {
+                    // 如果无法获取内容流，使用空流但记录状态码
+                    contentStream = new ByteArrayInputStream(new byte[0]);
+                }
+            }
+
             return new Response(
-                    // Consume the entire HTTP response before returning the stream
-                    entity == null ? null : new BufferedHttpEntity(entity).getContent(),
-                    response.getStatusLine().getStatusCode(),
-                    response.getAllHeaders()
+                contentStream,
+                response.getStatusLine().getStatusCode(),
+                response.getAllHeaders()
             );
         } catch (IOException e) {
-            throw new ApiException(e.getMessage(), e);
+            throw new ApiException("Request failed: " + e.getMessage(), e);
         } finally {
-
-            // Ensure this response is properly closed
+            // 确保响应被正确关闭
             HttpClientUtils.closeQuietly(response);
-
         }
     }
+
+    /**
+     * 处理 JSON 请求体
+     */
+    private void handleJsonBody(RequestBuilder builder, Request request) {
+        // 从 postParams 转换为 JSON
+        Map<String, List<String>> postParams = request.getPostParams();
+        if (postParams != null && !postParams.isEmpty()) {
+            try {
+                Map<String, Object> jsonParams = new HashMap<>();
+                for (Map.Entry<String, List<String>> entry : postParams.entrySet()) {
+                    String key = entry.getKey();
+                    List<String> values = entry.getValue();
+                    if (key != null && values != null && !values.isEmpty()) {
+                        // 只取第一个值，因为 curl 示例是单值
+                        jsonParams.put(key, values.get(0));
+                    }
+                }
+
+                String jsonBody = JSON.toJSONString(jsonParams);
+                builder.setEntity(new StringEntity(jsonBody, StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                throw new ApiException("Failed to create JSON request body", e);
+            }
+        }
+    }
+
+    /**
+     * 处理表单编码请求体
+     */
+    private void handleFormUrlEncodedBody(RequestBuilder builder, Request request) {
+        Map<String, List<String>> postParams = request.getPostParams();
+        if (postParams != null && !postParams.isEmpty()) {
+            List<NameValuePair> params = new ArrayList<>();
+            for (Map.Entry<String, List<String>> entry : postParams.entrySet()) {
+                String key = entry.getKey();
+                List<String> values = entry.getValue();
+                if (key != null && values != null) {
+                    for (String value : values) {
+                        if (value != null) {
+                            params.add(new BasicNameValuePair(key, value));
+                        }
+                    }
+                }
+            }
+            if (!params.isEmpty()) {
+                builder.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
+            }
+        }
+    }
+
 
     /**
      * Make a Idp Submit file post request.
@@ -155,51 +234,37 @@ public class NetworkHttpClient extends HttpClient {
      * @param request request to make
      * @return Response of the HTTP request
      */
+    @Override
     public Response makeSubmitRequest(final Request request) {
-
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-        String fileName = request.getPostParams().get("fileName").get(0);
-        String filePath = request.getPostParams().get("filePath").get(0);
-        String fileType = request.getPostParams().get("fileType").get(0);
-        if(filePath != null) {
-            logger.debug("filePath: " + filePath);
-            File file = new File(filePath);
-            builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
-        }else if(request.getInputStream() != null) {
-            builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
-        }
-        builder.addTextBody("fileType", fileType);
-        if(request.getPostParams().containsKey("customer")) {
-            builder.addTextBody("customer", request.getPostParams().get("customer").get(0));
-        }
-
-        if(request.getPostParams().containsKey("customerParam")) {
-            builder.addTextBody("customerParam", request.getPostParams().get("customerParam").get(0));
-        }
-
-        if(request.getPostParams().containsKey("callback")) {
-            String callBackUrl = request.getPostParams().get("callback").get(0);
-            String callBackMode = request.getPostParams().get("callbackMode").get(0);
-            builder.addTextBody("callback", callBackUrl);
-            builder.addTextBody("callbackMode", callBackMode);
-        }
-
-        if(request.getPostParams().containsKey("hitl")) {
-            builder.addTextBody("hitl", "true");
-        }
-        
-        if(request.getPostParams().containsKey("autoChecks")) {
-            builder.addTextBody("autoChecks", request.getPostParams().get("autoChecks").get(0));
-        }
-
 
         // Construct Http body
         HttpPost httpPost = new HttpPost(request.getUrl());
-        HttpEntity entity = builder.build();
-        httpPost.setEntity(entity);
+        HttpEntity entity = null;
+        if (request.getHttpEntity() != null) {
+            entity = request.getHttpEntity();
+            httpPost.setEntity(entity);
+        } else {
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
+            builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+            String fileName = request.getPostParams().get("fileName").get(0);
+            if (request.getPostParams().containsKey("filePath")) {
+                String filePath = request.getPostParams().get("filePath").get(0);
+                logger.debug("filePath: " + filePath);
+                File file = new File(filePath);
+                builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
+            } else if (request.getInputStream() != null) {
+                builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
+            }
+            for (Map.Entry<String, List<String>> entry : request.getPostParams().entrySet()) {
+                for (String value : entry.getValue()) {
+                    builder.addTextBody(entry.getKey(), value);
+                }
+            }
+            entity = builder.build();
+            httpPost.setEntity(entity);
+        }
+
         if(request.getIsOauth()) {
             httpPost.addHeader("Authorization", request.getToken());
         }else {

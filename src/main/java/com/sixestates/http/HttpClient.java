@@ -5,16 +5,20 @@ import lombok.Setter;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 
 public abstract class HttpClient {
 
-    public static final int CONNECTION_TIMEOUT = 10000;
-    public static final int SOCKET_TIMEOUT = 30500;
+    public static final int CONNECTION_TIMEOUT = 100000;
+    public static final int SOCKET_TIMEOUT = 305000;
+    public static final int DEFAULT_CONNECTION_REQUEST_TIMEOUT = 305000;
     public static final RequestConfig DEFAULT_REQUEST_CONFIG = RequestConfig
             .custom()
             .setConnectTimeout(CONNECTION_TIMEOUT)
             .setSocketTimeout(SOCKET_TIMEOUT)
+            .setConnectionRequestTimeout(DEFAULT_CONNECTION_REQUEST_TIMEOUT) // 请求超时
             .build();
     public static final SocketConfig DEFAULT_SOCKET_CONFIG = SocketConfig
             .custom()
@@ -49,6 +53,13 @@ public abstract class HttpClient {
      */
     public Response reliableRequest(final Request request) {
         return reliableRequest(request, RETRY_CODES, RETRIES, DELAY_MILLIS);
+    }
+
+    public static MultipartEntityBuilder getBaseBuilder() {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        return builder;
     }
 
     /**

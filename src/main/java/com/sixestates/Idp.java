@@ -19,16 +19,150 @@ public class Idp {
     private static String token; // customer used if this is null
     private static String authorization; //oauth2.0 authorization token
     private static boolean isOauth; //oauth2.0 authorization token
-    private static String submitUrl = "https://idp-sea.6estates.com/customer/extraction/fields/async";
-    private static String extractUrl = "https://idp-sea.6estates.com/customer/extraction/field/async/result/";
+    private static String host = "https://idp-sea.6estates.com/customer";
+    private static String submitUrl = host + "/extraction/fields/async";
+    private static String historyListUrl = host + "/extraction/history/list";
+    private static String toHitlUrl = host + "/extraction/task/to_hitl";
+    private static String extractUrl = host + "/extraction/field/async/result/";
     private static String oauthUrl = "https://oauth-sea.6estates.com/oauth/token?grant_type=client_bind";
     private static String lang = System.getenv("IDP_LANG");
     private static volatile IdpRestClient restClient;
+    private static String faasAnalysisUrl = host + "/extraction/faas/analysis";
 
+    private static String faasAnalysisStatusUrl = host + "/extraction/faas/analysis/status";
+
+    private static String faasAnalysisExportUrl = host + "/extraction/faas/analysis/export";
+    private static String faasAnalysisResultUrl = host + "/extraction/faas/analysis/result/";
+    private static String faasAnalysisAdditionUrl = host + "/extraction/faas/analysis/addition";
+    private static String splitExtractionUrl = host + "/extraction/split/ext/fields/async";
+
+    private static String splitExtractionStatusUrl = host + "/extraction/split/ext/status";
+
+    private static String splitExtractionDownloadUrl = host + "/extraction/split/ext/download/zip";
+
+    private static String quotaUrl = host + "/extraction/quota";
+
+    private static String documentAgentAnalysisUrl = host + "/extraction/doc_agent/analysis";
+
+    private static String documentAgentStatusUrl = host + "/extraction/doc_agent/status";
+
+    private static String documentAgentExportUrl = host + "/extraction/doc_agent/analysis/export";
+
+    private static String syncCardExtractionUrl = host + "/extraction/fields/sync/cards";
 
     private Idp() {}
 
+    public static synchronized void setSyncCardExtractionUrl(final String syncCardExtractionUrl) {
+        Idp.syncCardExtractionUrl = syncCardExtractionUrl;
+    }
 
+    public static synchronized String getSyncCardExtractionUrl() {
+        return syncCardExtractionUrl;
+    }
+
+    public static synchronized void setDocumentAgentExportUrl(final String documentAgentExportUrl) {
+        Idp.documentAgentExportUrl = documentAgentExportUrl;
+    }
+
+    public static synchronized String getDocumentAgentExportUrl() {
+        return documentAgentExportUrl;
+    }
+
+    public static synchronized void setDocumentAgentStatusUrl(final String documentAgentStatusUrl) {
+        Idp.documentAgentStatusUrl = documentAgentStatusUrl;
+    }
+
+    public static synchronized String getDocumentAgentStatusUrl() {
+        return documentAgentStatusUrl;
+    }
+
+    public static synchronized void setDocumentAgentAnalysisUrl(final String documentAgentAnalysisUrl) {
+        Idp.documentAgentAnalysisUrl = documentAgentAnalysisUrl;
+    }
+
+    public static synchronized String getDocumentAgentAnalysisUrl() {
+        return documentAgentAnalysisUrl;
+    }
+
+    public static synchronized void setQuotaUrl(final String quotaUrl) {
+        Idp.quotaUrl = quotaUrl;
+    }
+
+    public static synchronized String getQuotaUrl() {
+        return quotaUrl;
+    }
+
+    public static synchronized void setSplitExtractionDownloadUrl(final String splitExtractionDownloadUrl) {
+        Idp.splitExtractionDownloadUrl = splitExtractionDownloadUrl;
+    }
+
+    public static synchronized String getSplitExtractionDownloadUrl() {
+        return splitExtractionDownloadUrl;
+    }
+
+    public static synchronized void setSplitExtractionStatusUrl(final String splitExtractionStatusUrl) {
+        Idp.splitExtractionStatusUrl = splitExtractionStatusUrl;
+    }
+
+    public static synchronized String getSplitExtractionStatusUrl() {
+        return splitExtractionStatusUrl;
+    }
+
+    public static synchronized void setSplitExtractionUrl(final String splitExtractionUrl) {
+        Idp.splitExtractionUrl = splitExtractionUrl;
+    }
+
+    public static synchronized String getSplitExtractionUrl() {
+        return splitExtractionUrl;
+    }
+
+    public static synchronized void setFaasAnalysisAdditionUrl(final String faasAnalysisAdditionUrl) {
+        Idp.faasAnalysisAdditionUrl = faasAnalysisAdditionUrl;
+    }
+
+    public static synchronized String getFaasAnalysisAdditionUrl() {
+        return faasAnalysisAdditionUrl;
+    }
+
+    public static synchronized void setFaasAnalysisResultUrl(final String faasAnalysisResultUrl) {
+        Idp.faasAnalysisResultUrl = faasAnalysisResultUrl;
+    }
+
+    public static synchronized String getFaasAnalysisResultUrl() {
+        return faasAnalysisResultUrl;
+    }
+
+    public static synchronized void setFaasAnalysisExportUrl(final String faasAnalysisExportUrl) {
+        Idp.faasAnalysisExportUrl = faasAnalysisExportUrl;
+    }
+
+    public static synchronized String getFaasAnalysisExportUrl() {
+        return faasAnalysisExportUrl;
+    }
+
+    public static synchronized void setFaasAnalysisStatusUrl(final String faasAnalysisStatusUrl) {
+        Idp.faasAnalysisStatusUrl = faasAnalysisStatusUrl;
+    }
+
+    public static synchronized String getFaasAnalysisStatusUrl() {
+        return faasAnalysisStatusUrl;
+    }
+
+    public static synchronized void setFaasAnalysisUrl(final String faasAnalysisUrl) {
+        Idp.faasAnalysisUrl = faasAnalysisUrl;
+    }
+
+    public static synchronized String getFaasAnalysisUrl() {
+        return faasAnalysisUrl;
+    }
+
+    public static synchronized void setToHitlUrl(final String toHitlUrl) {
+        Idp.toHitlUrl = toHitlUrl;
+    }
+
+    public static synchronized String getToHitlUrl() {
+        return toHitlUrl;
+    }
 
     /**
      * Initialize the Idp environment.
@@ -196,10 +330,11 @@ public class Idp {
                     "IdpRestClient was used before token and AuthToken were set, please call Idp.init() or Idp.initAuthorization."
             );
         }
-        if(!isOauth)
-        return new IdpRestClient(customer,customerParam,token, false);
-        else
+        if (!isOauth) {
+            return new IdpRestClient(customer, customerParam, token, false);
+        } else {
             return new IdpRestClient(customer,customerParam,authorization, true);
+        }
     }
 
     /**
@@ -222,4 +357,7 @@ public class Idp {
     }
 
 
+    public static String getHistoryListUrl() {
+        return historyListUrl;
+    }
 }

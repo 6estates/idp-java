@@ -1,6 +1,7 @@
 package com.sixestates.http;
 
 import com.sixestates.exception.ApiException;
+import org.apache.http.HttpEntity;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -20,6 +21,7 @@ public class Request {
     private boolean isSubmit = false;
     private boolean isOauth = true;
     private  String token;
+    private HttpEntity httpEntity;
 
 
     /**
@@ -65,6 +67,14 @@ public class Request {
 
     public boolean getIsOauth() {
         return this.isOauth;
+    }
+
+    public HttpEntity getHttpEntity() {
+        return httpEntity;
+    }
+
+    public void setHttpEntity(HttpEntity httpEntity) {
+        this.httpEntity = httpEntity;
     }
 
     public void setIsSubmit(boolean isSubmit) {

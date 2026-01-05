@@ -2,21 +2,17 @@ package com.sixestates.example;
 
 
 import com.sixestates.Idp;
-import com.sixestates.exception.ApiConnectionException;
-import com.sixestates.exception.ApiException;
 import com.sixestates.rest.v1.ExtractSubmitter;
-import com.sixestates.rest.v1.ResultExtractor;
-import com.sixestates.type.ResultDTO;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
-import java.io.FileInputStream;
+
+import java.io.InputStream;
 
 public class Example {
 
-    public static final String TOKEN = "XXXXXXX";
-    public static final String FILE_NAME = "acount_statement_mandiri.pdf";
-    public static final String FILE_PATH = "/home//lay/Documents/acount_statement_mandiri.pdf" ;
-    public static final String FILE_TYPE = "CBKS";
+//        public static final String TOKEN = "XXXXXXX";
+    public static final String TOKEN = "VIfKfKB/U35E2/xv/ovJbONgONqbx8EugMGcYh3gT7DpL7qM2+lUKDP3e9hNdQpL";
+    public static final String FILE_PATH = "files/CBKS.pdf";
 
     /**
      * Example IDP usage.
@@ -25,73 +21,16 @@ public class Example {
      * @throws Exception if unable to generate InterruptedException or ApiException
      */
     public static void main(String[] args) throws Exception {
-
         Idp.init(TOKEN);
-
-        // Submit a task
+//        // Submit a task
         TaskDTO taskDto = null;
-        try {
-            TaskInfo taskInfo = TaskInfo.builder()
-                    .fileName(FILE_NAME)
-                    .filePath(FILE_PATH)
-                    .fileType(FILE_TYPE)
-                    .hitl(true)
-                    .build();
-            taskDto = ExtractSubmitter.submit(taskInfo);
-
-            System.out.println("taskId: " + taskDto.getData());
-        }catch (final ApiException | ApiConnectionException e) {
-            System.err.println(e);
-        }
-
-        // Extract the result
-        if(taskDto != null && taskDto.getStatus() == 200) {
-
-            try {
-                System.out.println(ResultExtractor.extractResultByTaskid(taskDto.getData()));
-            }catch (ApiException e) {
-                System.err.println(e);
-            }
-        }
-
-
-        // Submit the  new task
-        TaskInfo taskInfo = TaskInfo.builder()
-                .fileName("1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
-                .filePath("/home/Documents/1006027_doc_MutasiBank_Bulan_2-1646623361478.jpg")
-                .fileType("CBKS")
-                .build();
-        taskDto = ExtractSubmitter.submit(taskInfo);
-        System.out.println("taskId: " + taskDto.getData());
-
-        // Extract the result
-        if(taskDto.getStatus() == 200) {
-            try{
-                boolean taskDone = false;
-                while(!taskDone){
-                    String taskId = taskDto.getData();
-                    ResultDTO resultDto = ResultExtractor.extractResultByTaskid(taskId);
-
-                    if(resultDto.getTaskStatus().equals("Done")) {
-                        //Print the response json string
-                        System.out.println(resultDto.getRespJson());
-                        taskDone = true;
-                    }else {
-                        System.out.println("The status is Doing or Init, please request again after 30 seconds ");
-                        Thread.sleep( 1000 * 30);
-                    }
-                }
-            }catch(ApiException e ){
-                System.err.println(e);
-            }
-        }
-
         // Submit task using InputStream
-        FileInputStream fis = null;
+        InputStream fis = null;
         try {
-            fis = new FileInputStream(FILE_PATH);
+            fis = Example.class.getClassLoader()
+                .getResourceAsStream(FILE_PATH);
 
-            taskInfo = TaskInfo.builder()
+            TaskInfo taskInfo = TaskInfo.builder()
                     .fileName("acount_statement_mandiri.pdf")
                     .inputStream(fis)
                     .fileType("CBKS")
@@ -103,7 +42,9 @@ public class Example {
         }catch(Exception e) {
             System.out.println(e);
         }finally {
-            if(fis!=null) fis.close();
+            if(fis!=null) {
+                fis.close();
+            }
         }
     }
 }

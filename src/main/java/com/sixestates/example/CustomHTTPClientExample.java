@@ -16,13 +16,16 @@ public class CustomHTTPClientExample {
     public static void main(String[] args) {
         Idp.init(TOKEN);
         // Custom http client conf
-        final int CONNECTION_TIMEOUT = 10000;
-        final int SOCKET_TIMEOUT = 30500;
+        final int CONNECTION_TIMEOUT = 100000;
+        final int SOCKET_TIMEOUT = 305000;
+        final int DEFAULT_CONNECTION_REQUEST_TIMEOUT = 300000; // 请求超时: 30秒
+
         RequestConfig requestConfig = RequestConfig
                 .custom()
                 .setConnectTimeout(CONNECTION_TIMEOUT)
                 .setSocketTimeout(SOCKET_TIMEOUT)
-                .build();
+            .setConnectionRequestTimeout(DEFAULT_CONNECTION_REQUEST_TIMEOUT) // 请求超时
+            .build();
 
         SocketConfig socketConfig = SocketConfig
                 .custom()
