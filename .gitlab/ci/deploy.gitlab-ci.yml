@@ -1,6 +1,6 @@
 deploy:
   stage: deploy
-  image: gcr.io/sixdocker/maven3-openjdk11
+  image: sixhub-registry.ap-southeast-5.cr.aliyuncs.com/sixhub/mvnd-openjdk-11
   script: 
     - mvn clean deploy
   only:
