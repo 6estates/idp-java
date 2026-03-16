@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.0.8</version>
+      <version>8.0.9</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -66,6 +66,17 @@ String yourAccessToken = "XXXXXX";
 Idp.init(yourAccessToken);
 ```
 
+#### 6E API Access Token
+``` java
+
+import com.sixestates.Idp;
+
+// Please obtain your access token from 6Estates in advance
+String yourAccessToken = "XXXXXX"; 
+
+Idp.init(yourAccessToken);
+```
+
 #### 6E API Authorization based on oauth 2.0
 ``` java
 
@@ -75,78 +86,75 @@ import com.sixestates.utils.OauthUtils;
 // Please update your OAuth Authorization on 6Estates Oauth Client Manage
 String yourOAuthAuthorization = "XXXXXX"; 
 
-OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(yourOAuthAuthorization);
+//This method will deprecated in the future
+//OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(yourOAuthAuthorization);
+
+String clientId = "XXXXXX";
+String clientSecret = "XXXXXX";
+//The following method will be a more security way
+OauthDTO oauthDTO = OauthUtils.getIDPAuthorization(clientId, clientSecret);
 String authorization = oauthDTO.getData().getValue();
 Idp.initAuthorization(authorization);
 ```
 
-### Submit a Task
+### App Extraction Submit a Task
+For detailed examples, please refer to Example.java
+#### App Extraction Submit a File with InputStream 
 
-#### Submit a Local File 
 ``` java
-String fileName = "xxx.pdf";
-String filePath = "/home/Documents/xxx.pdf" ;
-String fileType = "CBKS";
+Idp.init(TOKEN);
+        TaskDTO taskDto = null;
+        InputStream fis = null;
+        try {
+            fis = Example.class.getClassLoader()
+                .getResourceAsStream(FILE_PATH);
 
-try {
-    TaskInfo taskInfo = TaskInfo.builder()
-        .fileName(fileName)
-        .filePath(filePath)
-        .fileType(fileType)
-        .build();
-        
-    TaskDTO taskDto = ExtractSubmitter.submit(taskInfo);
-    
-    System.out.println("taskId: " + taskDto.getData());
-    }catch (final ApiException | ApiConnectionException e) {
-        System.err.println(e);
-}
+            TaskInfo taskInfo = TaskInfo.builder()
+                    .fileName("acount_statement_mandiri.pdf")
+                    .inputStream(fis)
+                    .fileType("CBKS")
+                    .build();
+
+            taskDto = ExtractSubmitter.submit(taskInfo);
+            System.out.println("taskId: " + taskDto.getData());
+            fis.close();
+        }catch(Exception e) {
+            System.out.println(e);
+        }finally {
+            if(fis!=null) {
+                fis.close();
+            }
+        }
 ```
 
-#### Submit a File with InputStream 
+### Query The App Extraction Result
 
 ``` java
-FileInputStream fis = null;
-try {
-    fis = new FileInputStream(FILE_PATH);
-
-    TaskInfo taskInfo = TaskInfo.builder()
-            .fileName("xxx.pdf")
-            .inputStream(fis)
-            .fileType("CBKS")
+ HistoryQueryParams params = HistoryQueryParamsBuilder.aHistoryQueryParams()
+            .withPage(1)
+            .withLimit(20)
+            .withSortOrder("descending")
+            .withSortColumn("create_time")
+            .withStatus(2)
+            .withFileTypeCode("cbks")
+            .withSource(2)
+            .withHitl(true)
+            .withStartCreateTime("2025-10-01")
+            .withEndCreateTime("2025-12-31")
             .build();
 
-    TaskDTO taskDto = ExtractSubmitter.submit(taskInfo);
-    
-    System.out.println("taskId: " + taskDto.getData());
-    fis.close();
-}catch(Exception e) {
-    System.out.println(e);
-}finally {
-    if(fis!=null) fis.close();
-}
-```
+        ExtractHistoryQuerier.HistoryTaskListResponse listResponse = ExtractHistoryQuerier.query(params);
 
-### Query The Extraction Result with the Task ID
+        if (listResponse.isSuccessful()) {
+            List<ExtractHistoryQuerier.HistoryTaskDTO> tasks = listResponse.getData().getResult();
+            int total = listResponse.getData().getTotal();
 
-``` java
-try{
-     boolean taskDone = false;
-     while(!taskDone){
-         String taskId = "12345";
-         ResultDTO resultDto = ResultExtractor.extractResultByTaskid(taskId);
-         if(resultDto.getTaskStatus().equals("Done")) {
-             //Print the response json string
-             System.out.println(resultDto.getRespJson());
-             taskDone = true;
-         }else {
-             System.out.println("The status is Doing or Init, please request again after 30 seconds ");
-             Thread.sleep( 1000 * 30);
-         }
-     }
- }catch(ApiException e ){
-     System.err.println(e);
- }
+            for (ExtractHistoryQuerier.HistoryTaskDTO task : tasks) {
+                System.out.println("Task ID: " + task.getId());
+                System.out.println("File Name: " + task.getFileName());
+                System.out.println("Created: " + task.getCreateTime());
+            }
+        }
 ```
 
 ### Recieve The Result from Callback
@@ -162,8 +170,7 @@ String CALLBACK_URL = "http://xxx.com";
 Int CALLBACK_MODE = 1;
 
 TaskInfo taskInfo = TaskInfo.builder()
-        .fileName(FILE_NAME)
-        .filePath(FILE_PATH)
+        .files(Lists.newArrayList(new File(filePath)))
         .fileType(FILE_TYPE)
         .callback(CALLBACK_URL)
         .callbackMode(CALLBACK_MODE)
@@ -228,6 +235,73 @@ public class CallBackController {
           }
   }
 }
+```
+
+### Submit FAAS Task
+For detailed examples, please refer to FaasExample.java
+#### Submit Files
+```
+List<FaasAnalysisSubmitter.RelatedParty> relatedParties = new ArrayList<>();
+        FaasAnalysisSubmitter.RelatedParty relatedParty = new FaasAnalysisSubmitter.RelatedParty();
+        relatedParty.setRelatedType("ORG_TYPE");
+        relatedParty.setOrgType(101);
+        relatedParty.setName("ABC Company");
+        relatedParties.add(relatedParty);
+
+        List<FaasAnalysisSubmitter.SupplierBuyer> suppliers = new ArrayList<>();
+        FaasAnalysisSubmitter.SupplierBuyer supplier = new FaasAnalysisSubmitter.SupplierBuyer();
+        supplier.setBusinessRelationship(2);
+        supplier.setLongRelationship(3);
+        supplier.setCompanyName("Supplier XYZ");
+        suppliers.add(supplier);
+        InputStream zipInputStream2 = ExtractHistoryQuerier.class.getClassLoader()
+            .getResourceAsStream("files/document.zip");
+
+        FaasAnalysisSubmitter.FaasAnalysisRequest request2 = new FaasAnalysisSubmitter.RequestBuilder(
+            zipInputStream2, "document.zip", "2", 1)
+            .withCifNumber("12345")
+            .withApplicationNumber("APP-001")
+            .withCurrency("SGD")
+            .withLoanAmount(100000.0f)
+            .withHitl("false")
+            .withAutomatic(true)
+            .withRelatedPartiesJson(JSON.toJSONString(relatedParties))
+            .withSupplierBuyerJson(JSON.toJSONString(suppliers))
+            .build();
+
+        IdpResponse<String> response2 = FaasAnalysisSubmitter.submit(request2);
+        if (response2.isSuccessful()) {
+            String taskId = response2.getData(); // e.g., "FAAS123456789"
+            System.out.println("Analysis task created: " + taskId);
+        }
+```
+
+### Submit Document Agent Task
+For detailed examples, please refer to DocAgentExample.java
+#### Submit Local File
+```
+try (InputStream fileStream = DocAgentExample.class.getClassLoader().getResourceAsStream("files/docagent.pdf")) {
+            DocumentAgentSubmitter.DocumentAgentRequest request = new DocumentAgentSubmitter.DocumentAgentRequest(
+                "DAG24",  // 流程代码
+                fileStream,
+                "docagent.pdf"
+            );
+
+            IdpResponse<String> response = DocumentAgentSubmitter.submit(request);
+
+            if (response.isSuccessful()) {
+                String applicationId = response.getData();
+                System.out.println("Document agent task submitted. Application ID: " + applicationId);
+
+                // 验证ID长度
+                if (DocumentAgentSubmitter.isValidForDatabaseStorage(applicationId)) {
+                    System.out.println("Application ID is suitable for database storage");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to read file: " + e.getMessage());
+        }
+
 ```
 
 [apidocs]: https://idp-sea.6estates.com/docs#/
