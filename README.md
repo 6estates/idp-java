@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.0.9</version>
+      <version>8.0.8</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -204,13 +204,19 @@ for (String fileName: fileBytesMap.keySet()) {
 callBackServer.stopServer();
 ```
 
-#### CallBack Springboot Controller
+#### CallBack Springboot Controller with Authenticate
 ``` java
 @Controller
 public class CallBackController {
+  public static final String SIGNATURE_HEADER = "Idp-Signature";
+  
   @RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
   @ResponseBody
-  public ResponseEntity mode0or1CallBack(@RequestBody String jsonStr) {
+  public ResponseEntity mode0or1CallBack(HttpServletRequest request) {
+      String signHeader = request.getHeader(SIGNATURE_HEADER);
+      String payload = IOUtils.readStreamAsString(request.getInputStream(), "UTF-8");
+      //Using the following method if you need to authenticate your API 
+      SignatureUtil.verifyAppHeader(payload.getBytes(), signHeader, "XXX");
       System.out.println("Receive a callback request!");
       System.out.println("Callback body: " + jsonStr); 
       return ResponseEntity.ok(200);
@@ -227,13 +233,83 @@ public class CallBackController {
 
           // Receive the file bytes
           System.out.println("Callback fileName: " + file.getOriginalFilename());
-          Bytes[] fileBytes = file.getBytes());
+          byte[] fileBytes = file.getBytes();
+          
+          //Using the following method if you need to authenticate your API 
+          SignatureUtil.verifyAppHeaderForMode2(json.getBytes(), file.getBytes(), signHeader, "XXX");
           return ResponseEntity.ok(200);
           } catch (IOException e) {
               e.printStackTrace();
               return ResponseEntity.ok(500);
           }
   }
+  
+  @RequestMapping(value = "/mode3")
+  @ResponseBody
+  public ResponseEntity mode3CallBack(@RequestParam("file") MultipartFile file, 
+                                      @RequestParam("result") MultipartFile json, 
+                                      @RequestParam MultipartFile resultInExcel,
+                                      @RequestParam MultipartFile resultInJson) {
+      try {
+          System.out.println("Receive a callback request!");
+          // Receive the result json file
+          String jsonStr = new String(json.getBytes());
+          System.out.println("Callback body: " + jsonStr);
+
+          // Receive the file bytes
+          System.out.println("Callback fileName: " + file.getOriginalFilename());
+          byte[] fileBytes = file.getBytes();
+          
+          //Using the following method if you need to authenticate your API 
+          SignatureUtil.verifyAppHeaderForMode3(json.getBytes(), file.getBytes(), 
+                  resultInExcel.getBytes(), resultInJson.getBytes(), signHeader, "XXX");
+          return ResponseEntity.ok(200);
+          } catch (IOException e) {
+              e.printStackTrace();
+              return ResponseEntity.ok(500);
+          }
+  }
+}
+```
+
+### Submit FAAS Task
+
+#### Submit Local Files
+``` java
+String filePath = "/home/Documents/xxx.pdf" ;
+TaskDTO taskDto = null;
+try {
+    FAASTaskInfo taskInfo = FAASTaskInfo.builder()
+            .files(Lists.newArrayList(new File(filePath)))
+            .customerType("2")
+            .informationType(0)
+            .build();
+    taskDto = FAASApi.submitFAASTask(taskInfo);
+
+    System.out.println("taskId: " + taskDto.getData());
+}catch (final ApiException | ApiConnectionException e) {
+    System.err.println(e);
+}
+```
+
+#### Submit Files with InputStream 
+
+``` java
+String fileName = "xxx.pdf";
+String filePath = "/home/Documents/xxx.pdf" ;
+
+TaskDTO taskDto = null;
+try {
+    FAASTaskInfo taskInfo = FAASTaskInfo.builder()
+            .fileInfos(Lists.newArrayList(new FileInfo(fileName, new FileInputStream(filePath))))
+            .customerType("2")
+            .informationType(0)
+            .build();
+    taskDto = FAASApi.submitFAASTask(taskInfo);
+
+    System.out.println("taskId: " + taskDto.getData());
+}catch (Exception e) {
+    System.err.println(e);
 }
 ```
 

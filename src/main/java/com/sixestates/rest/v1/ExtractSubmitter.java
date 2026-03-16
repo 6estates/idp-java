@@ -5,14 +5,26 @@ import com.alibaba.fastjson.JSON;
 import com.sixestates.Idp;
 import com.sixestates.exception.ApiConnectionException;
 import com.sixestates.exception.ApiException;
+import com.sixestates.exception.InvalidRequestException;
 import com.sixestates.exception.RestException;
 import com.sixestates.http.HttpMethod;
 import com.sixestates.http.IdpRestClient;
 import com.sixestates.http.Request;
 import com.sixestates.http.Response;
+import com.sixestates.type.FileInfo;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
+import com.sixestates.utils.CollectionUtils;
+import com.sixestates.utils.StringUtils;
 import org.apache.http.HttpHeaders;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ExtractSubmitter {
@@ -39,11 +51,9 @@ public class ExtractSubmitter {
      * @return Requested object
      */
     private static TaskDTO submit(final IdpRestClient client,TaskInfo taskInfo) {
-
         Request request = new Request(
                 HttpMethod.POST,
-                Idp.getSubmitUrl(),
-                taskInfo.getInputStream()
+                Idp.getSubmitUrl()
         );
         request.setIsSubmit(true);
         addHeaderParams(request);
@@ -77,8 +87,22 @@ public class ExtractSubmitter {
      * @param request Request to add post params to
      */
     private static void addPostParams(final Request request, TaskInfo taskInfo) {
-        request.addPostParam("fileName", taskInfo.getFileName());
-        request.addPostParam("filePath", taskInfo.getFilePath());
+        Map<String, List<FileInfo>> fileInfoMap = new HashMap<>();
+        List<File> files = taskInfo.getFiles();
+        List<FileInfo> fileInfos = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(files)) {
+            for (File file : files) {
+                try {
+                    fileInfos.add(new FileInfo(file.getName(), new FileInputStream(file)));
+                } catch (FileNotFoundException e) {
+                    throw new InvalidRequestException("file not found", e);
+                }
+            }
+        } else if(!CollectionUtils.isEmpty(taskInfo.getFileInfos())) {
+            fileInfos.addAll(taskInfo.getFileInfos());
+        }
+        fileInfoMap.put("file", fileInfos);
+        request.setFileInfoMap(fileInfoMap);
         request.addPostParam("fileType", taskInfo.getFileType());
         if(taskInfo.getCustomer() != null) {
             request.addPostParam("customer", taskInfo.getCustomer());
@@ -93,6 +117,10 @@ public class ExtractSubmitter {
             request.addPostParam("callbackMode", String.valueOf(taskInfo.getCallbackMode()));
         }
 
+        if (taskInfo.getAutoCallback() != null) {
+            request.addPostParam("autoCallback", String.valueOf(taskInfo.getAutoCallback()));
+        }
+
         if(taskInfo.isHitl()) {
             request.addPostParam("hitl", "true");
         }
@@ -100,6 +128,23 @@ public class ExtractSubmitter {
         if(taskInfo.getAutoChecks() != 0) {
             request.addPostParam("autoChecks", String.valueOf(taskInfo.getAutoChecks()));
         }
+
+        if(taskInfo.getExtractMode() != null) {
+            request.addPostParam("extractMode", String.valueOf(taskInfo.getExtractMode()));
+        }
+
+        if (taskInfo.getFileTypeFrom() != null) {
+            request.addPostParam("fileTypeFrom", String.valueOf(taskInfo.getFileTypeFrom()));
+        }
+
+        if(StringUtils.isNotEmpty(taskInfo.getIncludingFieldCodes())) {
+            request.addPostParam("includingFieldCodes", taskInfo.getIncludingFieldCodes());
+        }
+
+        if (StringUtils.isNotEmpty(taskInfo.getRemark())) {
+            request.addPostParam("remark", taskInfo.getRemark());
+        }
+
     }
 
 }
