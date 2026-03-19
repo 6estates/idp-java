@@ -5,13 +5,14 @@ import com.sixestates.Idp;
 import com.sixestates.rest.v1.ExtractSubmitter;
 import com.sixestates.type.TaskDTO;
 import com.sixestates.type.TaskInfo;
+import com.sixestates.utils.Lists;
 
-import java.io.InputStream;
+import java.io.File;
 
 public class Example {
 
     public static final String TOKEN = "XXXXXXX";
-    public static final String FILE_PATH = "files/CBKS.pdf";
+    public static final String FILE_PATH = "/Users/yecong/Downloads/decrypted.pdf";
 
     /**
      * Example IDP usage.
@@ -23,27 +24,16 @@ public class Example {
         Idp.init(TOKEN);
 //        // Submit a task
         TaskDTO taskDto = null;
-        // Submit task using InputStream
-        InputStream fis = null;
         try {
-            fis = Example.class.getClassLoader()
-                .getResourceAsStream(FILE_PATH);
-
             TaskInfo taskInfo = TaskInfo.builder()
-                    .fileName("acount_statement_mandiri.pdf")
-                    .inputStream(fis)
+                .files(Lists.newArrayList(new File(FILE_PATH)))
                     .fileType("CBKS")
                     .build();
 
             taskDto = ExtractSubmitter.submit(taskInfo);
             System.out.println("taskId: " + taskDto.getData());
-            fis.close();
         }catch(Exception e) {
             System.out.println(e);
-        }finally {
-            if(fis!=null) {
-                fis.close();
-            }
         }
     }
 }

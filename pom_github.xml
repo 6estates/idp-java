@@ -18,46 +18,20 @@
         </license>
     </licenses>
 
-<!--    <scm>-->
-<!--        <url>git@github.com:6estates/idp-java.git</url>-->
-<!--        <connection>scm:git:git@github.com:6estates/idp-java.git</connection>-->
-<!--        <developerConnection>scm:git:git@github.com:6estates/idp-java.git</developerConnection>-->
-<!--        <tag>0.0.1</tag>-->
-<!--    </scm>-->
+   <scm>
+       <url>git@github.com:6estates/idp-java.git</url>
+       <connection>scm:git:git@github.com:6estates/idp-java.git</connection>
+       <developerConnection>scm:git:git@github.com:6estates/idp-java.git</developerConnection>
+       <tag>0.0.1</tag>
+   </scm>
 
-<!--    <developers>-->
-<!--        <developer>-->
-<!--            <name>anyangli</name>-->
-<!--            <email>411746630@qq.com</email>-->
-<!--        </developer>-->
-<!--    </developers>-->
+   <developers>
+       <developer>
+           <name>anyangli</name>
+           <email>411746630@qq.com</email>
+       </developer>
+   </developers>
 
-    <repositories>
-        <repository>
-            <id>nexus-releases</id>
-            <name>nexus-releases</name>
-            <url>https://repos.6estates.com/repository/releases/</url>
-        </repository>
-        <repository>
-            <id>nexus-snapshot</id>
-            <name>nexus-snapshot</name>
-            <url>https://repos.6estates.com/repository/snapshots/</url>
-        </repository>
-        <repository>
-            <id>com.e-iceblue</id>
-            <name>e-iceblue</name>
-            <url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
-        </repository>
-
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <name>nexus-releases</name>
-            <url>https://repos.6estates.com/repository/releases/</url>
-        </repository>
-    </distributionManagement>
 
     <properties>
         <java.version>11</java.version>
@@ -93,8 +67,26 @@
                     </execution>
                 </executions>
             </plugin>
-
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <failOnError>false</failOnError>  <!-- 忽略错误 -->
+                            <additionalOptions>
+                            <option>-Xdoclint:none</option>  <!-- 禁用文档检查 -->
+                            </additionalOptions>
+                    </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -106,6 +98,38 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+           <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.9.0</version>
+            <extensions>true</extensions>
+            <configuration>
+            <publishingServerId>ossrh</publishingServerId>
+            <autoPublish>true</autoPublish>
+            <waitUntil>uploaded</waitUntil>
+            </configuration>
+        </plugin>   
         </plugins>
     </build>
 

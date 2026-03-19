@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.0.8</version>
+      <version>8.2.5</version>
       <scope>compile</scope>
   </dependency>
 ```
@@ -102,29 +102,21 @@ For detailed examples, please refer to Example.java
 #### App Extraction Submit a File with InputStream 
 
 ``` java
+String filePath = "/home/Documents/xxx.pdf" ;
+String fileType = "CBKS";
 Idp.init(TOKEN);
-        TaskDTO taskDto = null;
-        InputStream fis = null;
-        try {
-            fis = Example.class.getClassLoader()
-                .getResourceAsStream(FILE_PATH);
+TaskDTO taskDto = null;
+try {
+    TaskInfo taskInfo = TaskInfo.builder()
+        .files(Lists.newArrayList(new File(filePath)))
+            .fileType(fileType)
+            .build();
 
-            TaskInfo taskInfo = TaskInfo.builder()
-                    .fileName("acount_statement_mandiri.pdf")
-                    .inputStream(fis)
-                    .fileType("CBKS")
-                    .build();
-
-            taskDto = ExtractSubmitter.submit(taskInfo);
-            System.out.println("taskId: " + taskDto.getData());
-            fis.close();
-        }catch(Exception e) {
-            System.out.println(e);
-        }finally {
-            if(fis!=null) {
-                fis.close();
-            }
-        }
+    taskDto = ExtractSubmitter.submit(taskInfo);
+    System.out.println("taskId: " + taskDto.getData());
+}catch(Exception e) {
+    System.out.println(e);
+}
 ```
 
 ### Query The App Extraction Result

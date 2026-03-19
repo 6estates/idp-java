@@ -20,9 +20,9 @@ public class ExtHistoryExample {
 
     public static void main(String[] args) {
         Idp.init(TOKEN);
-//        testQuery();
+        testQuery();
 
-        testAddToHitl();
+//        testAddToHitl();
     }
 
     private static void testQuery() {

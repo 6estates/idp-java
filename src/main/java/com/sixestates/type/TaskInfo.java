@@ -18,9 +18,12 @@ import java.util.Map;
 @Contract
 public class TaskInfo implements Serializable {
 
+
     private List<File> files ;
 
     private List<FileInfo> fileInfos;
+
+    private InputStream inputStream;
 
     private String fileType;
 
@@ -30,11 +33,11 @@ public class TaskInfo implements Serializable {
 
     private String callback;
 
-    private Boolean autoCallback;
-
     private int callbackMode;
 
     private boolean hitl;
+
+    private Boolean autoCallback;
 
     /**
      * 是否返回auth check内容，0：否，1：是

@@ -57,7 +57,7 @@ public class ExtractSubmitter {
         );
         request.setIsSubmit(true);
         addHeaderParams(request);
-        addPostParams(request,taskInfo);
+        addPostParams(request, taskInfo);
         Response response = client.request(request);
 
         if (response == null) {

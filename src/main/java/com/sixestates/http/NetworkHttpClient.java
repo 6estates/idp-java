@@ -2,6 +2,7 @@ package com.sixestates.http;
 
 import com.alibaba.fastjson.JSON;
 import com.sixestates.exception.ApiException;
+import com.sixestates.type.FileInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -247,14 +248,24 @@ public class NetworkHttpClient extends HttpClient {
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
             builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-            String fileName = request.getPostParams().get("fileName").get(0);
-            if (request.getPostParams().containsKey("filePath")) {
-                String filePath = request.getPostParams().get("filePath").get(0);
-                logger.debug("filePath: " + filePath);
-                File file = new File(filePath);
-                builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
-            } else if (request.getInputStream() != null) {
-                builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
+            Map<String, List<FileInfo>> fileInfoMap = request.getFileInfoMap();
+            if (fileInfoMap != null) {
+                for (Map.Entry<String, List<FileInfo>> entry : fileInfoMap.entrySet()) {
+                    for (FileInfo fileInfo : entry.getValue()) {
+                        builder.addBinaryBody(entry.getKey(), fileInfo.getInputStream(),
+                            ContentType.MULTIPART_FORM_DATA, fileInfo.getFileName());
+                    }
+                }
+            } else if (request.getPostParams().get("fileName") != null) {
+                String fileName = request.getPostParams().get("fileName").get(0);
+                if (request.getPostParams().containsKey("filePath")) {
+                    String filePath = request.getPostParams().get("filePath").get(0);
+                    logger.debug("filePath: " + filePath);
+                    File file = new File(filePath);
+                    builder.addBinaryBody("file", file, ContentType.MULTIPART_FORM_DATA, fileName);
+                } else if (request.getInputStream() != null) {
+                    builder.addBinaryBody("file", request.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
+                }
             }
             for (Map.Entry<String, List<String>> entry : request.getPostParams().entrySet()) {
                 for (String value : entry.getValue()) {
@@ -276,10 +287,10 @@ public class NetworkHttpClient extends HttpClient {
             response = client.execute(httpPost);
             HttpEntity respEntity = response.getEntity();
             return new Response(
-                    // Consume the entire HTTP response before returning the stream
-                    entity == null ? null : new BufferedHttpEntity(respEntity).getContent(),
-                    response.getStatusLine().getStatusCode(),
-                    response.getAllHeaders()
+                // Consume the entire HTTP response before returning the stream
+                entity == null ? null : new BufferedHttpEntity(respEntity).getContent(),
+                response.getStatusLine().getStatusCode(),
+                response.getAllHeaders()
             );
         } catch (IOException e) {
             throw new ApiException(e.getMessage(), e);

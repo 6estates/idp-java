@@ -1,6 +1,7 @@
 package com.sixestates.http;
 
 import com.sixestates.exception.ApiException;
+import com.sixestates.type.FileInfo;
 import org.apache.http.HttpEntity;
 
 import java.io.InputStream;
@@ -18,11 +19,11 @@ public class Request {
     private final Map<String, List<String>> postParams;
     private final Map<String, List<String>> headerParams;
     private InputStream inputStream;
+    private Map<String, List<FileInfo>> fileInfoMap;
     private boolean isSubmit = false;
     private boolean isOauth = true;
     private  String token;
     private HttpEntity httpEntity;
-
 
     /**
      * Create a new API request.
@@ -61,14 +62,6 @@ public class Request {
         return this.token;
     }
 
-    public boolean getIsSubmit() {
-        return this.isSubmit;
-    }
-
-    public boolean getIsOauth() {
-        return this.isOauth;
-    }
-
     public HttpEntity getHttpEntity() {
         return httpEntity;
     }
@@ -77,8 +70,24 @@ public class Request {
         this.httpEntity = httpEntity;
     }
 
+    public boolean getIsSubmit() {
+        return this.isSubmit;
+    }
+
+    public boolean getIsOauth() {
+        return this.isOauth;
+    }
+
     public void setIsSubmit(boolean isSubmit) {
         this.isSubmit = isSubmit;
+    }
+
+    public Map<String, List<FileInfo>> getFileInfoMap() {
+        return fileInfoMap;
+    }
+
+    public void setFileInfoMap(Map<String, List<FileInfo>> fileInfoMap) {
+        this.fileInfoMap = fileInfoMap;
     }
 
     public void setAuth(final String token, final boolean isOauth) {

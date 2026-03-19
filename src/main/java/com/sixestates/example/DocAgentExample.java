@@ -23,8 +23,8 @@ public class DocAgentExample {
     public static void main(String[] args) {
         Idp.init(TOKEN);
 //        testSubmit();
-//        testGetStatus();
-        testGetResult();
+        testGetStatus();
+//        testGetResult();
     }
 
     public static void testGetResult() {
