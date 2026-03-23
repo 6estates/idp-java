@@ -27,7 +27,7 @@ Use the following dependency in your project to grab via Maven:
    <dependency>
       <groupId>com.sixestates</groupId>
       <artifactId>idp-sdk</artifactId>
-      <version>8.2.8</version>
+      <version>8.2.9</version>
       <scope>compile</scope>
   </dependency>
 ```
