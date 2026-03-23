@@ -1,8 +1,9 @@
 stages:
   # - codestyle
   - test
+  - buildtag
   - deploy
-
+  
 variables:
   GIT_DEPTH: "20"
   GIT_SUBMODULE_STRATEGY: "none"
@@ -17,10 +18,9 @@ include:
   - project: infrastructure/gitlab-ci-functions
     ref: master
     file: templates/.register-gitlab-ci.yml
-  # java codestyle check
- # - project: infrastructure/code-style/java-code-style-checker
- #   ref: master
- #   file: templates/codestyle-docker.gitlab-ci.yml
   - local: .gitlab/ci/test.gitlab-ci.yml
   - local: .gitlab/ci/deploy.gitlab-ci.yml
+  - project: infrastructure/gitlab-ci-functions
+    ref: master
+    file: templates/merge.gitlab-ci.yml
 
