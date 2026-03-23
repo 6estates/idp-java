@@ -57,10 +57,10 @@
             <name>Nexus Releases Repository</name>
             <url>https://repos.6estates.com/repository/releases/</url>
         </repository>
-<!--        <snapshotRepository>-->
-<!--            <id>nexus-snapshot</id> <name>Nexus Snapshots Repository</name>-->
-<!--            <url>https://repos.6estates.com/repository/snapshots/</url>-->
-<!--        </snapshotRepository>-->
+        <snapshotRepository>
+            <id>nexus-snapshot</id> <name>Nexus Snapshots Repository</name>
+            <url>https://repos.6estates.com/repository/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <properties>

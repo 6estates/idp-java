@@ -36,6 +36,18 @@ public class Idp {
     private static String faasAnalysisResultUrl = host + "/extraction/faas/analysis/result/";
     private static String faasAnalysisAdditionUrl = host + "/extraction/faas/analysis/addition";
     private static String splitExtractionUrl = host + "/extraction/split/ext/fields/async";
+    private static String cDMSubmitUrl = host + "/extraction/cross_document_match/analysis";
+    private static String cDMStatusUrl = host + "/extraction/cross_document_match/status";
+    private static String cDMExportZipUrl = host + "/extraction/cross_document_match/export/zip";
+    private static String cDMExportExcelUrl = host + "/extraction/cross_document_match/export/excel";
+
+    private static String digitizationUrl = host + "/extraction/digitization";
+    private static String digitizationStatusUrl = host + "/extraction/digitization/status";
+    private static String digitizationExportUrl = host + "/extraction/digitization/export";
+
+    private static String fsAgentSubmitUrl = host + "/extraction/fs_agent/analysis";
+    private static String fsAgentStatusUrl = host + "/extraction/fs_agent/analysis/status";
+    private static String fsAgentExportUrl = host + "/extraction/fs_agent/analysis/export";
 
     private static String splitExtractionStatusUrl = host + "/extraction/split/ext/status";
 
@@ -52,6 +64,86 @@ public class Idp {
     private static String syncCardExtractionUrl = host + "/extraction/fields/sync/cards";
 
     private Idp() {}
+
+    public static String getFsAgentSubmitUrl() {
+        return fsAgentSubmitUrl;
+    }
+
+    public static void setFsAgentSubmitUrl(String fsAgentSubmitUrl) {
+        Idp.fsAgentSubmitUrl = fsAgentSubmitUrl;
+    }
+
+    public static String getFsAgentStatusUrl() {
+        return fsAgentStatusUrl;
+    }
+
+    public static void setFsAgentStatusUrl(String fsAgentStatusUrl) {
+        Idp.fsAgentStatusUrl = fsAgentStatusUrl;
+    }
+
+    public static String getFsAgentExportUrl() {
+        return fsAgentExportUrl;
+    }
+
+    public static void setFsAgentExportUrl(String fsAgentExportUrl) {
+        Idp.fsAgentExportUrl = fsAgentExportUrl;
+    }
+
+    public static String getcDMStatusUrl() {
+        return cDMStatusUrl;
+    }
+
+    public static String getDigitizationUrl() {
+        return digitizationUrl;
+    }
+
+    public static void setDigitizationUrl(String digitizationUrl) {
+        Idp.digitizationUrl = digitizationUrl;
+    }
+
+    public static String getDigitizationStatusUrl() {
+        return digitizationStatusUrl;
+    }
+
+    public static void setDigitizationStatusUrl(String digitizationStatusUrl) {
+        Idp.digitizationStatusUrl = digitizationStatusUrl;
+    }
+
+    public static String getDigitizationExportUrl() {
+        return digitizationExportUrl;
+    }
+
+    public static void setDigitizationExportUrl(String digitizationExportUrl) {
+        Idp.digitizationExportUrl = digitizationExportUrl;
+    }
+
+    public static void setcDMStatusUrl(String cDMStatusUrl) {
+        Idp.cDMStatusUrl = cDMStatusUrl;
+    }
+
+    public static String getcDMExportZipUrl() {
+        return cDMExportZipUrl;
+    }
+
+    public static void setcDMExportZipUrl(String cDMExportZipUrl) {
+        Idp.cDMExportZipUrl = cDMExportZipUrl;
+    }
+
+    public static String getcDMExportExcelUrl() {
+        return cDMExportExcelUrl;
+    }
+
+    public static void setcDMExportExcelUrl(String cDMExportExcelUrl) {
+        Idp.cDMExportExcelUrl = cDMExportExcelUrl;
+    }
+
+    public static String getcDMSubmitUrl() {
+        return cDMSubmitUrl;
+    }
+
+    public static void setcDMSubmitUrl(String cDMSubmitUrl) {
+        Idp.cDMSubmitUrl = cDMSubmitUrl;
+    }
 
     public static synchronized void setSyncCardExtractionUrl(final String syncCardExtractionUrl) {
         Idp.syncCardExtractionUrl = syncCardExtractionUrl;
