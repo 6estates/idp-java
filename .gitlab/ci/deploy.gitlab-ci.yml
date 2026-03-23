@@ -4,4 +4,4 @@ deploy:
   script: 
     - mvn clean deploy
   only:
-  - tags
+  - /^v[0-9]+(?:.[0-9]+)+$/
