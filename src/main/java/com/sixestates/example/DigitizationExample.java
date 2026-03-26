@@ -3,6 +3,7 @@ package com.sixestates.example;
 import com.sixestates.Idp;
 import com.sixestates.http.Response;
 import com.sixestates.rest.v1.digitization.DigitizationApi;
+import com.sixestates.rest.v1.model.DigitizationResultRequest;
 import com.sixestates.type.IdpResponse;
 
 import java.io.File;
@@ -54,8 +55,8 @@ public class DigitizationExample {
         String savePath = System.getProperty("user.home") + "/Downloads/ocr_result.docx";
 
         // 构造请求：Word类型(1)，字号10
-        DigitizationApi.DigitizationResultRequest requestParamer =
-            new DigitizationApi.DigitizationResultRequest(applicationId, 1);
+        DigitizationResultRequest requestParamer =
+            new DigitizationResultRequest(applicationId, 1);
         requestParamer.setFontSize(10);
 
         try {
