@@ -19,8 +19,7 @@ public class Idp {
     private static String token; // customer used if this is null
     private static String authorization; //oauth2.0 authorization token
     private static boolean isOauth; //oauth2.0 authorization token
-//    private static String host = "https://idp-sea.6estates.com/customer";
-    private static String host = "https://idp.6estates.com/customer";
+    private static String host = "https://idp-sea.6estates.com/customer";
     private static String submitUrl = host + "/extraction/fields/async";
     private static String historyListUrl = host + "/extraction/history/list";
     private static String toHitlUrl = host + "/extraction/task/to_hitl";
