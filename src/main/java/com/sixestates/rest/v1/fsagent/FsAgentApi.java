@@ -13,7 +13,6 @@ import com.sixestates.http.Response;
 import com.sixestates.type.IdpResponse;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.InputStream;
@@ -33,6 +32,7 @@ public class FsAgentApi {
         String url = Idp.getFsAgentSubmitUrl();
 
         Request apiRequest = new Request(HttpMethod.POST, url);
+        apiRequest.setIsSubmit(true);
         apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
 
         MultipartEntityBuilder builder = getBaseBuilder();
@@ -52,32 +52,27 @@ public class FsAgentApi {
     // --- 5.1.2 Query Status ---
     public static IdpResponse<FsAgentStatus> queryStatus(String applicationId) {
         String url = Idp.getFsAgentStatusUrl();
-        String jsonBody = String.format("{\"applicationId\":\"%s\"}", applicationId);
-
-        return executeJsonRequest(url, jsonBody, new TypeReference<IdpResponse<FsAgentStatus>>() {});
+        Request request = new Request(HttpMethod.POST, url);
+        request.addPostParam("applicationId", applicationId);
+        request.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+        return execute(Idp.getRestClient(), request, new TypeReference<IdpResponse<FsAgentStatus>>() {
+        });
     }
 
     // --- 5.1.3 Export Result ---
     public static Response downloadResult(String applicationId) {
         String url = Idp.getFsAgentExportUrl();
-        String jsonBody = String.format("{\"applicationId\":\"%s\"}", applicationId);
 
         Request apiRequest = new Request(HttpMethod.POST, url);
         apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        apiRequest.setHttpEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
+        apiRequest.addPostParam("applicationId", applicationId);
+        apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 
         Response response = Idp.getRestClient().request(apiRequest);
         if (response == null || !IdpRestClient.SUCCESS.test(response.getStatusCode())) {
             throw new ApiException("FS Agent Export failed");
         }
         return response;
-    }
-
-    private static <T> T executeJsonRequest(String url, String jsonBody, TypeReference<T> typeReference) {
-        Request apiRequest = new Request(HttpMethod.POST, url);
-        apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        apiRequest.setHttpEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
-        return execute(Idp.getRestClient(), apiRequest, typeReference);
     }
 
     private static <T> T execute(IdpRestClient client, Request apiRequest, TypeReference<T> typeReference) {

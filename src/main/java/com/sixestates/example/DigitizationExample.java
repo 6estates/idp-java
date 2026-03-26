@@ -18,19 +18,19 @@ public class DigitizationExample {
         Idp.init(TOKEN);
 
         // 1. 提交数字化任务
-        // String appId = testSubmit();
+//         String appId = testSubmit();
 
         // 2. 查询状态
-        String applicationId = "DIG199649207856968047";
-        testStatus(applicationId);
+        String applicationId = "DIG206610920363794594";
+//        testStatus(applicationId);
 
         // 3. 下载 Word 结果
         testDownloadWord(applicationId);
     }
 
     public static String testSubmit() throws IOException {
-        try (InputStream is = DigitizationExample.class.getClassLoader().getResourceAsStream("files/test.pdf")) {
-            IdpResponse<String> response = DigitizationApi.submit(is, "test.pdf");
+        try (InputStream is = DigitizationExample.class.getClassLoader().getResourceAsStream("files/CBKS.pdf")) {
+            IdpResponse<String> response = DigitizationApi.submit(is, "CBKS.pdf");
             if (response.isSuccessful()) {
                 System.out.println("Submitted! AppID: " + response.getData());
                 return response.getData();
@@ -54,12 +54,12 @@ public class DigitizationExample {
         String savePath = System.getProperty("user.home") + "/Downloads/ocr_result.docx";
 
         // 构造请求：Word类型(1)，字号10
-        DigitizationApi.DigitizationResultRequest request =
+        DigitizationApi.DigitizationResultRequest requestParamer =
             new DigitizationApi.DigitizationResultRequest(applicationId, 1);
-        request.setFontSize(10);
+        requestParamer.setFontSize(10);
 
         try {
-            Response response = DigitizationApi.downloadResult(request);
+            Response response = DigitizationApi.downloadResult(requestParamer);
             File file = new File(savePath);
             try (InputStream is = response.getStream();
                  FileOutputStream fos = new FileOutputStream(file)) {

@@ -33,6 +33,7 @@ public class DigitizationApi {
         String url = Idp.getDigitizationUrl();
 
         Request apiRequest = new Request(HttpMethod.POST, url);
+        apiRequest.setIsSubmit(true);
         apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
 
         MultipartEntityBuilder builder = getBaseBuilder();
@@ -45,19 +46,23 @@ public class DigitizationApi {
     // --- 7.1.2 Query Status ---
     public static IdpResponse<Integer> queryStatus(String applicationId) {
         String url = Idp.getDigitizationStatusUrl();
-        String jsonBody = String.format("{\"applicationId\":\"%s\"}", applicationId);
-        return executeJsonRequest(url, jsonBody, new TypeReference<IdpResponse<Integer>>() {});
+        Request request = new Request(HttpMethod.POST, url);
+        request.addPostParam("applicationId", applicationId);
+        request.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+        return execute(Idp.getRestClient(), request, new TypeReference<IdpResponse<Integer>>(){});
     }
 
     // --- 7.1.3 Download/Query Result ---
-    public static Response downloadResult(DigitizationResultRequest request) {
+    public static Response downloadResult(DigitizationResultRequest requestParamer) {
         String url = Idp.getDigitizationExportUrl();
-        String jsonBody = JSON.toJSONString(request);
 
         Request apiRequest = new Request(HttpMethod.POST, url);
         apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        apiRequest.setHttpEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
-
+        apiRequest.addPostParam("applicationId", requestParamer.getApplicationId());
+        apiRequest.addPostParam("type", requestParamer.getType().toString());
+        if (requestParamer.getFontSize() != null) {
+            apiRequest.addPostParam("fontSize", requestParamer.getFontSize().toString());
+        }
         IdpRestClient client = Idp.getRestClient();
         Response response = client.request(apiRequest);
 
@@ -72,12 +77,7 @@ public class DigitizationApi {
         return response;
     }
 
-    private static <T> T executeJsonRequest(String url, String jsonBody, TypeReference<T> typeReference) {
-        Request apiRequest = new Request(HttpMethod.POST, url);
-        apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        apiRequest.setHttpEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
-        return execute(Idp.getRestClient(), apiRequest, typeReference);
-    }
+
 
     private static <T> T execute(IdpRestClient client, Request apiRequest, TypeReference<T> typeReference) {
         Response response = client.request(apiRequest);

@@ -18,20 +18,20 @@ public class FsAgentExample {
         Idp.init(TOKEN);
 
         // 1. 提交任务
-        // String appId = testSubmit();
+//        String appId = testSubmit();
 
         // 2. 查询详细状态
-        String applicationId = "FSA12345678901234567890123456789012";
-        testQueryStatus(applicationId);
+        String applicationId = "FSA206616458606682274";
+//        testQueryStatus(applicationId);
 
         // 3. 导出结果
         testExport(applicationId);
     }
 
     public static String testSubmit() throws IOException {
-        try (InputStream is = FsAgentExample.class.getClassLoader().getResourceAsStream("files/bank_statement.pdf")) {
-            FsAgentApi.FsAgentRequest request = new FsAgentApi.FsAgentRequest(is, "bank_statement.pdf");
-            request.setHitl(true); // 开启 HITL
+        try (InputStream is = FsAgentExample.class.getClassLoader().getResourceAsStream("files/CBKS.pdf")) {
+            FsAgentApi.FsAgentRequest request = new FsAgentApi.FsAgentRequest(is, "CBKS.pdf");
+//            request.setHitl(true); // 开启 HITL
 
             IdpResponse<String> response = FsAgentApi.submit(request);
             if (response.isSuccessful()) {

@@ -77,8 +77,7 @@ public abstract class HttpClient {
         Response response = null;
         if(request.getIsSubmit()){
             response = makeSubmitRequest(request);
-        }
-        else {
+        } else {
             response = makeRequest(request);
         }
         lastResponse = response;

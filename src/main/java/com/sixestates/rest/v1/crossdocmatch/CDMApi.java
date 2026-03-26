@@ -37,6 +37,7 @@ public class CDMApi {
         String url = Idp.getcDMSubmitUrl(); // 假设 Idp 类中有此方法，或直接使用字符串路径
 
         Request apiRequest = new Request(HttpMethod.POST, url);
+        apiRequest.setIsSubmit(true);
         apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
 
         MultipartEntityBuilder builder = getBaseBuilder();
@@ -69,7 +70,10 @@ public class CDMApi {
     // --- 8.1.2 Query Status ---
     public static IdpResponse<Integer> queryStatus(String applicationId) {
         String url = Idp.getcDMStatusUrl();
-        return executeJsonRequest(url, applicationId, new TypeReference<IdpResponse<Integer>>() {});
+        Request request = new Request(HttpMethod.POST, url);
+        request.addPostParam("applicationId", applicationId);
+        request.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+        return execute(Idp.getRestClient(), request, new TypeReference<IdpResponse<Integer>>() {});
     }
 
     // --- 8.1.3 & 8.1.4 Download Result (Excel/ZIP) ---
@@ -84,8 +88,7 @@ public class CDMApi {
         apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 
         // 3. 构建 JSON Body
-        String jsonBody = String.format("{\"applicationId\":\"%s\"}", applicationId);
-        apiRequest.setHttpEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
+        apiRequest.addPostParam("applicationId", applicationId);
 
         // 4. 执行请求
         IdpRestClient client = Idp.getRestClient();
@@ -103,15 +106,6 @@ public class CDMApi {
         }
 
         return response;
-    }
-
-    // 通用执行逻辑封装
-    private static <T> T executeJsonRequest(String url, String applicationId, TypeReference<T> typeReference) {
-        Request apiRequest = new Request(HttpMethod.POST, url);
-        apiRequest.addHeaderParam(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        String jsonBody = String.format("{\"applicationId\":\"%s\"}", applicationId);
-        apiRequest.setHttpEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
-        return execute(Idp.getRestClient(), apiRequest, typeReference);
     }
 
     private static <T> T execute(IdpRestClient client, Request apiRequest, TypeReference<T> typeReference) {

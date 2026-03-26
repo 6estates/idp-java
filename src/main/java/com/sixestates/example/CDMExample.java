@@ -23,11 +23,11 @@ public class CDMExample {
         Idp.init(TOKEN);
 
         // 1. 提交任务
-        // String appId = testSubmit();
+//         String appId = testSubmit();
 
         // 2. 查询状态 (假设已知 ID)
-        String applicationId = "CDM12345678901234567890123456789012";
-        testGetStatus(applicationId);
+        String applicationId = "CDM206615714050613410";
+//        testGetStatus(applicationId);
 
         // 3. 下载结果
         testGetResult(applicationId);
@@ -38,19 +38,19 @@ public class CDMExample {
      */
     public static String testSubmit() throws IOException {
         CDMApi.CDMSubmitRequest request = new CDMApi.CDMSubmitRequest();
-        request.setMatchingGroupCode("CDM_GROUP_1");
+        request.setMatchingGroupCode("CDM_GROUP_100");
         request.setHitl(false);
         request.setMergeFile(false);
 
         // 添加第一个文件 (指定 docType)
-        try (InputStream stream1 = CDMExample.class.getClassLoader().getResourceAsStream("files/doc1.pdf")) {
-            CDMApi.FileParam file1 = new CDMApi.FileParam(stream1, "doc1.pdf");
+        try (InputStream stream1 = CDMExample.class.getClassLoader().getResourceAsStream("files/docagent.pdf")) {
+            CDMApi.FileParam file1 = new CDMApi.FileParam(stream1, "docagent.pdf");
             file1.setDocType("CBKS");
             request.addFileParam(file1);
 
             // 添加第二个文件 (使用检测模式)
-            try (InputStream stream2 = CDMExample.class.getClassLoader().getResourceAsStream("files/doc2.pdf")) {
-                CDMApi.FileParam file2 = new CDMApi.FileParam(stream2, "doc2.pdf");
+            try (InputStream stream2 = CDMExample.class.getClassLoader().getResourceAsStream("files/CBKS.pdf")) {
+                CDMApi.FileParam file2 = new CDMApi.FileParam(stream2, "CBKS.pdf");
                 file2.setDetectionMode(1);
                 request.addFileParam(file2);
 
