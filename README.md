@@ -55,16 +55,6 @@ If you run into trouble with local tests, use:
 ## Quickstart
 
 ### Initialize the 6Estates IDP Client
-#### 6E API Access Token(Deprecated)
-``` java
-
-import com.sixestates.Idp;
-
-// Please obtain your access token from 6Estates in advance
-String yourAccessToken = "XXXXXX"; 
-
-Idp.init(yourAccessToken);
-```
 
 #### 6E API Access Token
 ``` java
