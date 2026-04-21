@@ -141,7 +141,11 @@ public class NetworkHttpClient extends HttpClient {
             List<String> contentType = headerParams.get(HttpHeaders.CONTENT_TYPE);
             if (contentType != null && contentType.contains("application/json")) {
                 // JSON 请求
-                handleJsonBody(builder, request);
+                if (request.getHttpEntity() != null) {
+                    builder.setEntity(request.getHttpEntity());
+                } else {
+                    handleJsonBody(builder, request);
+                }
             } else {
                 // 默认使用 form-urlencoded
                 handleFormUrlEncodedBody(builder, request);
@@ -170,7 +174,7 @@ public class NetworkHttpClient extends HttpClient {
                 response.getStatusLine().getStatusCode(),
                 response.getAllHeaders()
             );
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new ApiException("Request failed: " + e.getMessage(), e);
         } finally {
             // 确保响应被正确关闭
